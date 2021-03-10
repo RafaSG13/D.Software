@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Oracle JET Starter Template - Hybrid Nav Bar</title>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' *.oracle.com  'unsafe-inline' 'unsafe-eval' localhost:* 127.0.0.1:*; style-src 'self' *.oracle.com 'unsafe-inline'; img-src * data:"/>
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link rel="icon" href="css/images/favicon.ico" type="image/x-icon"/>
+
+    <!-- This is the main css file for the default Alta theme -->
+<!-- injector:theme -->
+<link rel="stylesheet" href="css/redwood/9.1.0/web/redwood.css" id="css"/>
+<!-- endinjector -->
+    <!-- This contains icon fonts used by the starter template -->
+    <link rel="stylesheet" href="css/demo-alta-site-min.css" type="text/css"/>
+    <link rel="stylesheet" id="uxiconFont" href="https://static.oracle.com/cdn/fnd/gallery/2010.0.0/images/iconfont/ojuxIconFont.min.css"/>
+
+    <!-- This is where you would add any app specific styling -->
+    <link rel="stylesheet" href="css/app.css" type="text/css"/>
+
+  </head>
+  <body>
+    <!-- template for rendering navigation bar items -->
+    <script type="text/html" id="navTemplate">
+      <li><a href="#">
+        <span :class="[[$data.detail.iconClass]]"></span>
+        <oj-bind-text value="[[$data.detail.label]]"></oj-bind-text>
+      </a></li>
+    </script>
+    <div id="globalBody">
+
+      <div id="announce" tabindex="-1" class="sendOffScreen" :aria-live="[[manner]]" aria-atomic="true">
+        <p id="ariaLiveMessage"><oj-bind-text value="[[message]]"></oj-bind-text></p>
+      </div>
+
+      <oj-module config="[[moduleAdapter.koObservableConfig]]" animation="[[moduleAdapter.animation]]"></oj-module>
+      <!--
+         ** Oracle JET V9.1.0 hybrid mobile application navigation bar pattern.
+         ** Please see the demos under Cookbook/Patterns/App Shell: Hybrid Mobile
+         ** and the CSS documentation under Support/API Docs/Non-Component Styling
+         ** on the JET website for more information on how to use this pattern.
+      -->
+      <div class="oj-applayout-fixed-bottom">
+        <div role="navigation" class="oj-hybrid-applayout-navbar-app">
+          <oj-navigation-list id="navList" class="oj-navigationlist-stack-icon-label" data="[[navDataProvider]]" edge="top" item.renderer="[[KnockoutTemplateUtils.getRenderer('navTemplate', true)]]" selection="{{selection.path}}">
+          </oj-navigation-list>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="js/libs/require/require.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+
+  </body>
+
+</html>
