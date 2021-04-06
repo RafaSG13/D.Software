@@ -1,10 +1,12 @@
 package edu.uclm.esi.carreful.http;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
@@ -50,7 +52,8 @@ public class UserController extends CookiesController {
 				Token token= new Token(email);
 				tokenDao.save(token);
 				Email smtp= new Email();
-				smtp.send(email,"Carreful: recuperacion de Contrasena", token.getId());
+		        String texto = "Para recuperar tu contraseña, pulsa aqui:" +"<a href='http://localhost/usarToken/"+ token.getId()+ "'>aquí</a>";
+				smtp.send(email,"Carreful: recuperacion de Contrasena", texto);
 			}
 			
 		}catch(Exception e) {
@@ -58,6 +61,24 @@ public class UserController extends CookiesController {
 		}
 	}
 	
+	
+	@GetMapping ("usarToken/{tokenId}")
+	public void usarToken(HttpServletResponse response , @PathVariable String tokenId) {
+		Optional<Token> optToken = tokenDao.findById(tokenId);
+		try {
+			if(optToken.isPresent()) {
+				Token token = optToken.get();
+				if(token.isUsed()) {
+					response.sendError(409,"El token ya se utilizo");
+				}
+				else response.sendRedirect("http://localhost?ojr=setNewPassword&token="+tokenId+"&email="+token.getEmail());
+			} else 
+				response.sendError(404,"El token no existe");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	@PutMapping("/register")
 	public void register(@RequestBody Map<String, Object> info) {
@@ -104,6 +125,5 @@ public class UserController extends CookiesController {
 		}catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 		}
-		
 	}
 }
