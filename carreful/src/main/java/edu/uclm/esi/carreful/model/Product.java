@@ -12,7 +12,7 @@ public class Product {
 	@Id @Column(length = 36)
 	private String id;
 	private String nombre;
-	private String precio;
+	private double precio;
 	@ManyToOne
 	private Categoria categoria;
 	
@@ -20,7 +20,7 @@ public class Product {
 		this.id = UUID.randomUUID().toString();
 	}
 	
-	public Product(String nombre, String precio) {
+	public Product(String nombre, double precio) {
 		this();
 		this.nombre = nombre;
 		this.precio = precio;
@@ -34,11 +34,11 @@ public class Product {
 		this.nombre = nombre;
 	}
 	
-	public String getPrecio() {
+	public double getPrecio() {
 		return precio;
 	}
 	
-	public void setPrecio(String precio) {
+	public void setPrecio(double precio) {
 		this.precio = precio;
 	}
 	

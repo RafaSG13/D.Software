@@ -50,35 +50,13 @@
             <div data-bind="html : message" style="color : blue"></div>
             <div data-bind="html : error" style="color : red"></div>
         </div>
-        
-        <table>
+
+         
+       <table>
         	<tr>
-        		<th>Nombre</th>
+        		<th>Producto</th>
         		<th>Precio</th>
-        		<th></th>
-        		<th></th>
-        	</tr>
-        	<!-- ko foreach : productos -->
-        		<tr>
-        		   
-        			<td data-bind="html : nombre"></td>
-        			<td data-bind="html : precio"></td>
-        			<td>
-        				<button data-bind="click : function() { $parent.eliminarProducto(id); }">Eliminar</button>
-        			</td>
-        			<td>
-        				<button data-bind="click : function() { $parent.addAlCarrito(id); }">Anadir al carrito</button>
-        			</td>
-        		</tr>
-        	<!-- /ko -->
-        </table>
-        
-                <table>
-        	<tr>
-        		<th>Nombre-Categoria</th>
-        		<th>Precio-Categoria</th>
-        		<th></th>
-        		<th></th>
+     
         	</tr>
         	<!-- ko foreach : producto_categoria -->
         		<tr>

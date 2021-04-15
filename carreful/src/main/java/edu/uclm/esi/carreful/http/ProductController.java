@@ -45,7 +45,7 @@ public class ProductController extends CookiesController {
 		}
 	}
 	
-	@PostMapping("/addAntiguo")
+	/*@PostMapping("/addAntiguo")
 	public void addAntiguo(@RequestBody Map<String, Object> info) {
 		try {
 			JSONObject jsoProduct = new JSONObject(info);
@@ -59,7 +59,7 @@ public class ProductController extends CookiesController {
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 		}
-	}
+	}*/
 	
 	@PostMapping("/add")
 	public void add(@RequestBody Product product) {
@@ -104,7 +104,7 @@ public class ProductController extends CookiesController {
 		try {
 			Optional<Product> optProduct = productDao.findById(nombre);
 			if (optProduct.isPresent())
-				return optProduct.get().getPrecio();
+				return ""+optProduct.get().getPrecio();
 			throw new Exception("El producto no existe");
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
