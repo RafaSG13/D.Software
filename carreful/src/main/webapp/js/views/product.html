@@ -1,0 +1,104 @@
+<div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top">
+    <header role="banner" class="oj-hybrid-applayout-header">
+      <oj-module config="[[headerConfig]]"></oj-module>
+    </header>
+  </div>
+  <!-- This is where your main page content will be loaded -->
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+      <div class="oj-hybrid-padding">
+        <h1>Producto</h1>
+        
+        <table align="center">
+        	<tr>
+        		<th>Unidades</th><th>Producto</th>
+        	</tr>
+        	<!-- ko foreach : carrito -->
+        		<tr>
+        			<td data-bind="html : amount"></td>
+        			<td data-bind="html : name"></td>
+        		</tr>
+        	<!-- /ko -->
+        </table>
+        <table>
+         	<tr>
+        		<th>Categorias</th>
+        	</tr>
+        	
+        	<tr>
+        		<!-- ko foreach : categorias -->
+        		<td>
+        			<button style="background-color:palegreen;" 
+        			data-bind="html : nombre, click : function() {$parent.getProductos_Categoria(id);} ">
+        			</button>
+        		</td>
+        		<!-- /ko -->
+        	</tr>
+        	
+        </table>
+        
+        <div>
+            <input type="text" data-bind="value : nombre" placeholder="Nombre del producto">
+            <input type="text" data-bind="value : precio" placeholder="Precio">
+            
+            <select data-bind="options: categorias,
+                   optionsText: function(item) {
+                       return item.nombre;
+                   }, value : categoria"></select>
+            <button data-bind="click : add">Guardar producto</button>
+            <div data-bind="html : message" style="color : blue"></div>
+            <div data-bind="html : error" style="color : red"></div>
+        </div>
+        
+        <table>
+        	<tr>
+        		<th>Nombre</th>
+        		<th>Precio</th>
+        		<th></th>
+        		<th></th>
+        	</tr>
+        	<!-- ko foreach : productos -->
+        		<tr>
+        		   
+        			<td data-bind="html : nombre"></td>
+        			<td data-bind="html : precio"></td>
+        			<td>
+        				<button data-bind="click : function() { $parent.eliminarProducto(id); }">Eliminar</button>
+        			</td>
+        			<td>
+        				<button data-bind="click : function() { $parent.addAlCarrito(id); }">Anadir al carrito</button>
+        			</td>
+        		</tr>
+        	<!-- /ko -->
+        </table>
+        
+                <table>
+        	<tr>
+        		<th>Nombre-Categoria</th>
+        		<th>Precio-Categoria</th>
+        		<th></th>
+        		<th></th>
+        	</tr>
+        	<!-- ko foreach : producto_categoria -->
+        		<tr>
+        		   
+        			<td data-bind="html : nombre"></td>
+        			<td data-bind="html : precio"></td>
+        			<td>
+        				<button data-bind="click : function() { $parent.eliminarProducto(id); }">Eliminar</button>
+        			</td>
+        			<td>
+        				<button data-bind="click : function() { $parent.addAlCarrito(id); }">Anadir al carrito</button>
+        			</td>
+        		</tr>
+        	<!-- /ko -->
+        </table>
+        
+        
+
+        
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top">
+    <header role="banner" class="oj-hybrid-applayout-header">
+      <oj-module config="[[headerConfig]]"></oj-module>
+    </header>
+  </div>
+  <!-- This is where your main page content will be loaded -->
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+      <div class="oj-hybrid-padding">
+        <h1>Pago</h1>
+        <div>
+            
+		    <form id="payment-form">
+		      <div id="card-element"><!--Stripe.js injects the Card Element--></div>
+		      <button id="submit">
+		        <div class="spinner hidden" id="spinner"></div>
+		        <span id="button-text">Pay now</span>
+		      </button>
+		      <p id="card-error" role="alert"></p>
+		      <p class="result-message hidden">
+		        Payment succeeded, see the result in your
+		        <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
+		      </p>
+		    </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

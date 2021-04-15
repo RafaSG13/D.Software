@@ -1,0 +1,34 @@
+<div class="oj-hybrid-applayout-page">
+	<div class="oj-applayout-fixed-top">
+		<header role="banner" class="oj-hybrid-applayout-header">
+			<oj-module config="[[headerConfig]]"></oj-module>
+		</header>
+	</div>
+	<!-- This is where your main page content will be loaded -->
+	<div class="oj-applayout-content">
+		<div role="main" class="oj-hybrid-applayout-content">
+			<div class="oj-hybrid-padding">
+				<h1>Creación de cuenta</h1>
+				<div>
+					<input type="text" placeholder="Nombre de usuario"
+						data-bind="value : userName"> <input type="email"
+						placeholder="Correo electrónico" data-bind="value : email">
+					<input type="password" placeholder="Contraseña"
+						data-bind="value : pwd1"> <input type="password"
+						placeholder="Repite contraseña" data-bind="value : pwd2">
+					<input type="file" size="50"
+						data-bind="event : {change : setPicture }"><br>
+					<!-- ko if : picture -->
+					<img data-bind="attr: { src : picture}" width="100" height="100">
+					<!-- /ko -->
+					<button id="btnCrearCuenta" data-bind="click : register">Crear
+						cuenta</button>
+					<div class="oj-sm-12" data-bind="html : message" style="color : blue">
+	            	</div>
+	            	<div class="oj-sm-12" data-bind="html : error" style="color : red">
+	            	</div>						
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
