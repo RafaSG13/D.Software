@@ -48,6 +48,8 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				success : function(response) {
 					self.message("Producto guardado");
 					self.getProductos();
+					self.getProductos_Categoria(info.categoria);
+					
 				},
 				error : function(response) {
 					/*self.error(response.responseJSON.errorMessage);*/
@@ -73,7 +75,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
-		
+		//SSSSSSS
 		getCategorias() {
 			let self = this;
 			let data = {
@@ -82,6 +84,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				contentType : 'application/json',
 				success : function(response) {
 					self.categorias(response);
+					
 				},
 				error : function(response) {
 					self.error(response.responseJSON.errorMessage);

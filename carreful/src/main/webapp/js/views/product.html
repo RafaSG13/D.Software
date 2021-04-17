@@ -9,7 +9,6 @@
     <div role="main" class="oj-hybrid-applayout-content">
       <div class="oj-hybrid-padding">
         <h1>Producto</h1>
-        
         <table align="center">
         	<tr>
         		<th>Unidades</th><th>Producto</th>
@@ -25,17 +24,15 @@
          	<tr>
         		<th>Categorias</th>
         	</tr>
-        	
         	<tr>
         		<!-- ko foreach : categorias -->
         		<td>
-        			<button style="background-color:palegreen;" 
+        			<button style="background-color:red;" 
         			data-bind="html : nombre, click : function() {$parent.getProductos_Categoria(id);} ">
         			</button>
         		</td>
         		<!-- /ko -->
-        	</tr>
-        	
+        	</tr> 	
         </table>
         
         <div>
@@ -51,7 +48,6 @@
             <div data-bind="html : error" style="color : red"></div>
         </div>
 
-         
        <table>
         	<tr>
         		<th>Producto</th>
@@ -60,7 +56,6 @@
         	</tr>
         	<!-- ko foreach : producto_categoria -->
         		<tr>
-        		   
         			<td data-bind="html : nombre"></td>
         			<td data-bind="html : precio"></td>
         			<td>
