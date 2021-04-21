@@ -110,6 +110,14 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 					}
 				};
 				$.ajax(data);
+		
+		getFoto(index){
+			var self= this;
+			let data ={
+				url: "product/getFoto/"
+			$.ajax(data);
+		}
+		
 		}
 		
 		register() {
