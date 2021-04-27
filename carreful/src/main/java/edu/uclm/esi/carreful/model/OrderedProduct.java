@@ -13,6 +13,11 @@ public class OrderedProduct {
 		this.amount+=amount;
 	}
 	
+	public void subAmount(double amount) {
+		this.amount-=amount;
+	}
+	
+	
 	public double getAmount() {
 		return amount;
 	}

@@ -213,4 +213,27 @@ public class ProductController extends CookiesController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 	}
+	
+	@PostMapping("/borrarDelCarrito/{id}")
+	public Carrito borrarDelCarrito(HttpServletRequest request, @PathVariable String id) {
+		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		if (carrito==null) {
+			carrito = new Carrito();
+			request.getSession().setAttribute("carrito", carrito);
+		}
+		Product producto = productDao.findById(id).get();
+
+		try {
+			carrito.subtract(producto, 1);
+			producto.setCantidad(producto.getCantidad()+1);
+			if(carrito.getAmount(producto)==0) {
+				carrito.remove(producto);
+			}
+			productDao.delete(producto);
+			productDao.save(producto);
+		}catch(Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+		return carrito;
+	}
 }

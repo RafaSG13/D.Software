@@ -165,6 +165,23 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
+		borrarDelCarrito(id) {
+			let self = this;
+			let data = {
+				url : "product/borrarDelCarrito/" + id,
+				type : "post",
+				contentType : 'application/json',
+				success : function(response) {
+					self.message("Producto restado del carrito");
+					self.carrito(response.products);
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+		}
+		
 		
 			sumarCantidad(id) {
 			let self = this;
