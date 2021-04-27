@@ -64,7 +64,17 @@ public class ProductController extends CookiesController {
 	@PostMapping("/add")
 	public void add(@RequestBody Product product) {
 		try {
-			productDao.save(product);
+			Optional<Product> optProduct=productDao.findByNombre(product.getNombre());
+			if(optProduct.isPresent()) {
+				optProduct.get().setCantidad(optProduct.get().getCantidad()+1);
+				productDao.delete(optProduct.get());
+				System.out.println(optProduct.get().getCantidad());
+				productDao.save(optProduct.get());
+				
+
+			}
+			else
+				productDao.save(product);
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 		}
@@ -99,12 +109,30 @@ public class ProductController extends CookiesController {
 		}
 	}
 	
-	@GetMapping("/getPrecio/{nombre}")
-	public String getPrecio(@PathVariable String nombre) {
+	@GetMapping("/getPrecio/{id}")
+	public String getPrecio(@PathVariable String id) {
 		try {
-			Optional<Product> optProduct = productDao.findById(nombre);
+			Optional<Product> optProduct = productDao.findById(id);
 			if (optProduct.isPresent())
 				return ""+optProduct.get().getPrecio();
+			throw new Exception("El producto no existe");
+		} catch(Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+	}
+	
+	@GetMapping("/getUnProducto/{id}")
+	public Product getUnProducto(@PathVariable String id) {
+		try {
+			Optional<Product> optProduct = productDao.findById(id);
+			if (optProduct.isPresent()) {
+				JSONObject jso= new JSONObject();
+				jso.put("id", optProduct.get().getId());
+				jso.put("nombre", optProduct.get().getNombre());
+				jso.put("precio", optProduct.get().getPrecio());
+				jso.put("categoria", optProduct.get().getCategoria());
+				return optProduct.get();
+			}
 			throw new Exception("El producto no existe");
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -119,7 +147,42 @@ public class ProductController extends CookiesController {
 			request.getSession().setAttribute("carrito", carrito);
 		}
 		Product producto = productDao.findById(id).get();
-		carrito.add(producto, 1);
+		
+		try {
+			if(producto.getCantidad()==0) throw new Exception("No hay stock disponible del producto");
+			carrito.add(producto, 1);
+			producto.setCantidad(producto.getCantidad()-1);
+			productDao.delete(producto);
+			productDao.save(producto);
+			
+		}catch(Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+		return carrito;
+	}
+	
+	@PostMapping("/sumarCantidad/{id}")
+	public Carrito sumarCantidad(HttpServletRequest request, @PathVariable String id) {
+		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		if (carrito==null) {
+			carrito = new Carrito();
+			request.getSession().setAttribute("carrito", carrito);
+		}
+		Optional<Product> producto=productDao.findById(id);
+		if(producto.isPresent()) {
+			try {
+				if(producto.get().getCantidad()==0) throw new Exception("No hay stock disponible del producto");
+				carrito.add(producto.get(), 1);
+				producto.get().setCantidad(producto.get().getCantidad()-1);
+				productDao.delete(producto.get());
+				productDao.save(producto.get());
+				
+			}catch(Exception e) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+			}
+		}
+		
+
 		return carrito;
 	}
 	

@@ -5,13 +5,14 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.ws.rs.DefaultValue;
 
 @Entity
 public class Categoria {
 	@Id @Column(length = 36)
 	private String id;
 	private String nombre;
-	@Column(nullable = false)
+	@Column(nullable = false) @DefaultValue("0")
 	private int numero_de_productos;
 	
 	public Categoria() {

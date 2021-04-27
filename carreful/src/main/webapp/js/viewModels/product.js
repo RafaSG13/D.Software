@@ -47,7 +47,8 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				contentType : 'application/json',
 				success : function(response) {
 					self.message("Producto guardado");
-					self.getProductos();
+					/*self.getProductos();*/
+					self.getProductos_Categoria(info.categoria.id);
 				},
 				error : function(response) {
 					/*self.error(response.responseJSON.errorMessage);*/
@@ -71,6 +72,23 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				}
 			};
 			$.ajax(data);
+		}
+		
+		getUnProducto(id) {
+			let self = this;
+			let data = {
+				url : "product/getUnProducto/"+ id,
+				type : "get",
+				contentType : 'application/json',
+				success : function(response) {
+					 response.categoria.id;
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+			
 		}
 		
 		
@@ -112,18 +130,21 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		
 		eliminarProducto(id) {
 			let self = this;
+			let c = categoria.id;
 			let data = {
 				url : "product/borrarProducto/" + id,
 				type : "delete",
 				contentType : 'application/json',
 				success : function(response) {
 					self.message("Producto eliminado");
-					/*self.getProductos();*/
+			
 				},
 				error : function(response) {
 					self.error(response.responseJSON.errorMessage);
 				}
 			};
+		
+			data.success;
 			$.ajax(data);
 		}
 		
@@ -135,6 +156,24 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				contentType : 'application/json',
 				success : function(response) {
 					self.message("Producto añadido al carrito");
+					self.carrito(response.products);
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+		}
+		
+		
+			sumarCantidad(id) {
+			let self = this;
+			let data = {
+				url : "product/sumarCantidad/" + id,
+				type : "post",
+				contentType : 'application/json',
+				success : function(response) {
+					self.message("Cantidad Actualizada");
 					self.carrito(response.products);
 				},
 				error : function(response) {

@@ -95,9 +95,6 @@ public class UserController extends CookiesController {
 	public void register(@RequestBody Map<String, Object> info) {
 		try {
 			JSONObject jso = new JSONObject(info);
-			String userName = jso.optString("userName");
-			if (userName.length()==0)
-				throw new Exception("Debes indicar tu nombre de usuario");
 			String email = jso.optString("email");
 			if (email.length()==0)
 				throw new Exception("Debes indicar un email válido");

@@ -20,4 +20,7 @@ public class OrderedProduct {
 	public String getName() {
 		return this.product.getNombre();
 	}
+	public String getId() {
+		return this.product.getId();
+	}
 }

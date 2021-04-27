@@ -10,17 +10,6 @@
       <div class="oj-hybrid-padding">
         <h1>Producto</h1>
         
-        <table align="center">
-        	<tr>
-        		<th>Unidades</th><th>Producto</th>
-        	</tr>
-        	<!-- ko foreach : carrito -->
-        		<tr>
-        			<td data-bind="html : amount"></td>
-        			<td data-bind="html : name"></td>
-        		</tr>
-        	<!-- /ko -->
-        </table>
         <table>
          	<tr>
         		<th>Categorias</th>
@@ -50,12 +39,36 @@
             <div data-bind="html : message" style="color : blue"></div>
             <div data-bind="html : error" style="color : red"></div>
         </div>
+	<div style="float:right;">
+		<h2>Carrito</h2>
+	        <table align="center">
+        	<tr>
 
+        		<th> </th><th> </th><th>Unidades</th><th>Producto</th><th>id</th>   	
+        		
+        	</tr>
+        	<!-- ko foreach : carrito -->
+        		<tr>
+        			<td><button data-bind="click : function() {$parent.addAlCarrito(id);}">-</button></td>
+        			<td><button>+</button></td>
+        			<td data-bind="html : amount"></td>
+        			<td data-bind="html : name"></td>
+        			<td data-bind="html : id"></td>
+        			
+        		</tr>
+        	<!-- /ko -->
+     
+        </table>
+	
+	
+	</div>
          
+     <div style="float:left;">
        <table>
         	<tr>
         		<th>Producto</th>
         		<th>Precio</th>
+        		<th>Stock</th>
      
         	</tr>
         	<!-- ko foreach : producto_categoria -->
@@ -63,8 +76,12 @@
         		   
         			<td data-bind="html : nombre"></td>
         			<td data-bind="html : precio"></td>
+        				<td data-bind="html : cantidad"></td>
         			<td>
-        				<button data-bind="click : function() { $parent.eliminarProducto(id); }">Eliminar</button>
+        				<button data-bind="click : function() {$parent.eliminarProducto(id);}">Eliminar</button>
+        			</td>
+        			<td>
+        				<button data-bind="click : function() {$parent.getUnProducto(id);}">UnProducto</button>
         			</td>
         			<td>
         				<button data-bind="click : function() { $parent.addAlCarrito(id); }">Anadir al carrito</button>
@@ -72,10 +89,7 @@
         		</tr>
         	<!-- /ko -->
         </table>
-        
-        
-
-        
+       </div>
       </div>
     </div>
   </div>
