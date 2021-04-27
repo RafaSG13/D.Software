@@ -1,3 +1,19 @@
+<head>
+	<style>
+		.boton_categoria {
+			background-color: #0033cc;
+    		transition-duration: 0.4s;
+			color: white;
+			border-radius: 4px;
+			font-size: 16px;
+}
+
+		.boton_categoria:hover {
+		    background-color: #000099;
+}
+	</style>
+</head>
+
 <div class="oj-hybrid-applayout-page">
   <div class="oj-applayout-fixed-top">
     <header role="banner" class="oj-hybrid-applayout-header">
@@ -18,7 +34,7 @@
         	<tr>
         		<!-- ko foreach : categorias -->
         		<td>
-        			<button style="background-color:palegreen;" 
+        			<button class="boton_categoria" 
         			data-bind="html : nombre, click : function() {$parent.getProductos_Categoria(id);} ">
         			</button>
         		</td>
@@ -64,6 +80,7 @@
 	</div>
          
      <div style="float:left;">
+		<h2>Productos</h2>
        <table>
         	<tr>
         		<th>Producto</th>
