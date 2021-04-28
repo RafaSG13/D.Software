@@ -17,6 +17,7 @@ public class User {
 	private String pwd;
 	@Lob
 	private String picture;
+	private boolean rol;
 	
 	public User() { }
 
@@ -27,6 +28,7 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 
 	@JsonIgnore
 	public String getPwd() {
@@ -43,5 +45,13 @@ public class User {
 
 	public void setPicture(String picture) {
 		this.picture = picture;
+	}
+	
+	public boolean getRol() {
+		return rol;
+	}
+
+	public void setRol(boolean rol) {
+		this.rol = rol;
 	}
 }

@@ -62,7 +62,9 @@ public class ProductController extends CookiesController {
 	}*/
 	
 	@PostMapping("/add")
-	public void add(@RequestBody Product product) {
+	public void add(HttpServletRequest request,@RequestBody Product product) {
+		String email = (String) request.getSession().getAttribute("userEmail");
+		System.out.println(email);
 		try {
 			Optional<Product> optProduct=productDao.findByNombre(product.getNombre());
 			if(optProduct.isPresent()) {

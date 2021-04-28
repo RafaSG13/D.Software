@@ -109,6 +109,9 @@ public class UserController extends CookiesController {
 			user.setPwd(pwd1);
 			user.setPicture(jso.optString("picture"));
 			userDao.save(user);
+			Email correo_confirmacion = new Email();
+			String contenido="Su registro se ha realizado con éxito.\nSus credenciales son:\nUsuario: "+email+"\nContraseña: "+pwd1;
+			correo_confirmacion.send(email, "Registro completado en Carreful", contenido);
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 		}
