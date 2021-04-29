@@ -48,7 +48,7 @@ public class ProductController extends CookiesController {
 			
 			Optional<Product> optProduct=productDao.findByNombre(product.getNombre());
 			if(optProduct.isPresent()) {
-				optProduct.get().setCantidad(optProduct.get().getCantidad()+1);
+				optProduct.get().setCantidad(optProduct.get().getCantidad()+product.getCantidad());
 				productDao.delete(optProduct.get());
 				productDao.save(optProduct.get());
 			}
@@ -118,6 +118,15 @@ public class ProductController extends CookiesController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 	}*/
+	@GetMapping("/getCarrito")
+	public Carrito getCarrito(HttpServletRequest request) {
+		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
+		if (carrito==null) {
+			carrito = new Carrito();
+			request.getSession().setAttribute(CARRITO, carrito);
+		}
+		return carrito;
+	}
 	
 	@PostMapping("/addAlCarrito/{id}")
 	public Carrito addAlCarrito(HttpServletRequest request, @PathVariable String id) {

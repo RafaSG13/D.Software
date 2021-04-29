@@ -7,6 +7,8 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			
 			self.nombre = ko.observable("");
 			self.precio = ko.observable("");
+			self.cantidad = ko.observable("");
+			self.congelado = ko.observable("");
 			self.categoria = ko.observable();
 			
 
@@ -40,6 +42,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			let info = {
 				nombre : this.nombre(),
 				precio : this.precio(),
+				cantidad: this.cantidad(),
 				categoria : this.categoria()
 			};
 			let data = {
@@ -149,6 +152,22 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
+		getCarrito(){
+			let self = this;
+			let data = {
+				url : "product/getCarrito/",
+				type : "get",
+				contentType : 'application/json',
+				success : function(response) {
+					self.carrito(response.products);
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+		}
+		
 		addAlCarrito(id) {
 			let self = this;
 			let data = {
@@ -208,7 +227,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		connected() {
 			accUtils.announce('Login page loaded.');
 			document.title = "Login";
-		
+			this.getCarrito();
 			this.getCategorias();
 		};
 

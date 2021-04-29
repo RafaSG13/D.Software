@@ -10,22 +10,34 @@
       <div class="oj-hybrid-padding">
         <h1>Pago</h1>
         <div>
-            
 		    <form id="payment-form">
 		      <div id="card-element"><!--Stripe.js injects the Card Element--></div>
 		      <button id="submit">
 		        <div class="spinner hidden" id="spinner"></div>
-		        <span id="button-text">Pay now</span>
+		        <span id="button-text" data-bind="click : solicitarPreautorizacion()">Pay now</span>
 		      </button>
 		      <p id="card-error" role="alert"></p>
 		      <p class="result-message hidden">
 		        Payment succeeded, see the result in your
-		        <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
+		        <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again
 		      </p>
 		    </form>
-
         </div>
-      </div>
+         <div>
+   			<h2>Carrito</h2>
+	        	<table>
+        			<tr>
+        				<th>Unidades</th><th>Producto</th>  	
+        		
+        			</tr>
+        				<!-- ko foreach : carrito -->
+        					<tr>
+        						<td data-bind="html : amount"></td>
+        						<td data-bind="html : name"></td>
+        					</tr>
+        				<!-- /ko -->
+        		</table>
+     		</div>
     </div>
   </div>
 </div>

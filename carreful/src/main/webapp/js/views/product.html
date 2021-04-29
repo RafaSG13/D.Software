@@ -1,7 +1,17 @@
 <head>
 	<style>
+	input{
+		  border: 3px solid #ccc;
+		  -webkit-transition: 0.5s;
+		  transition: 0.5s;
+		  outline: none;
+		}
+
+		input:focus {
+		  border: 3px solid #555;
+		}
 		.boton_categoria {
-			background-color: #0033cc;
+			background-color: #04A6FF;
     		transition-duration: 0.4s;
 			color: white;
 			border-radius: 4px;
@@ -46,12 +56,15 @@
         <div>
             <input type="text" data-bind="value : nombre" placeholder="Nombre del producto">
             <input type="text" data-bind="value : precio" placeholder="Precio">
+            <input type="number" data-bind="value : cantidad" placeholder="Cantidad" min="1" onkeyup="if(this.value<1){this.value=1}">
+            Congelado<input type="checkbox" data-bind="checked : congelado">
             
             <select data-bind="options: categorias,
                    optionsText: function(item) {
                        return item.nombre;
                    }, value : categoria"></select>
             <button data-bind="click : add">Guardar producto</button>
+            
             <div data-bind="html : message" style="color : blue"></div>
             <div data-bind="html : error" style="color : red"></div>
         </div>

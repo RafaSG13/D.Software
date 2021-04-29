@@ -36,7 +36,7 @@ public class Carrito {
 		return ordered.getAmount();
 	}
 	public double getTotal() {
-		double suma=0;
+		double suma=1;
 		return suma;
 	}
 

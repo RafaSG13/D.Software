@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,8 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 
 import edu.uclm.esi.carreful.model.Carrito;
+import edu.uclm.esi.carreful.model.Product;
+import edu.uclm.esi.carreful.tokens.Email;
 
 @RestController
 @RequestMapping("payments")
@@ -29,6 +32,11 @@ public class PaymentsController extends CookiesController {
 	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
+			//Crear el pedido. coger el pedido y por cada uno declarar una variable suma que calcule el coste total. vaya producto a producto a ver si es congelado
+			// si hay un congelado hacer un domicilio_express. Guardar el pedido en la base de datos.
+			
+			
+			
 			PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
 					.setCurrency("eur")
 					.setAmount((long) carrito.getTotal())
@@ -36,9 +44,34 @@ public class PaymentsController extends CookiesController {
 			// Create a PaymentIntent with the order amount and currency
 			PaymentIntent intent = PaymentIntent.create(createParams);
 			JSONObject jso = new JSONObject(intent.toJson());
+			
+			
+			
 			return jso.getString("client_secret");
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
+	}
+	
+	@GetMapping("/confirmarPedido")
+	public String confirmarPedido(HttpServletRequest request) {
+		try {
+			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
+			Email correo = new Email();
+			correo.send((String) request.getSession().getAttribute("userEmail"),"Compra realizada","La compra de su pedido ha sido realizada correctamente");
+			return "Compra realizada con exito";
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}
+	}
+	
+	@GetMapping("/getCarrito")
+	public Carrito getCarrito(HttpServletRequest request) {
+		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		if (carrito==null) {
+			carrito = new Carrito();
+			request.getSession().setAttribute("carrito", carrito);
+		}
+		return carrito;
 	}
 }
