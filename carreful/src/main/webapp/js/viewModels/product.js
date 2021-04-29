@@ -8,8 +8,10 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			self.nombre = ko.observable("");
 			self.precio = ko.observable("");
 			self.categoria = ko.observable();
+			
 
-			self.productos = ko.observableArray([]);
+			
+			self.carrito = ko.observableArray([]);
 			self.categorias = ko.observableArray([]);
 			self.carrito = ko.observableArray([]);
 			self.producto_categoria = ko.observableArray([]);
@@ -47,18 +49,17 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				contentType : 'application/json',
 				success : function(response) {
 					self.message("Producto guardado");
-					/*self.getProductos();*/
 					self.getProductos_Categoria(info.categoria.id);
 				},
 				error : function(response) {
 					/*self.error(response.responseJSON.errorMessage);*/
-					self.error("Error al guardar un Producto en la BBDD");
+					self.error(response.responseJSON.errorMessage);
 				}
 			};
 			$.ajax(data);
 		}
 		
-		getProductos() {
+		/*getProductos() {
 			let self = this;
 			let data = {
 				url : "product/getTodos",
@@ -72,7 +73,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				}
 			};
 			$.ajax(data);
-		}
+		}*/
 		
 		getUnProducto(id) {
 			let self = this;
@@ -207,8 +208,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		connected() {
 			accUtils.announce('Login page loaded.');
 			document.title = "Login";
-			
-			this.getProductos();
+		
 			this.getCategorias();
 		};
 

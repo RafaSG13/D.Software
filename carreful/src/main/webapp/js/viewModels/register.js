@@ -19,6 +19,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		self.pwd1 = ko.observable("");
 		self.pwd2 = ko.observable("");
 		self.picture=ko.observable();
+		self.rol=ko.observable("");
 
 		self.message = ko.observable();
 		self.error = ko.observable();
@@ -38,7 +39,8 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				email : self.email(),
 				pwd1 : self.pwd1(),
 				pwd2 : self.pwd2(),
-				picture : self.picture()
+				picture : self.picture(),
+				rol : self.rol()
 			};
 			var data = {
 					data : JSON.stringify(info),

@@ -1,5 +1,6 @@
 package edu.uclm.esi.carreful.http;
 
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import edu.uclm.esi.carreful.CargaImagenes;
 import edu.uclm.esi.carreful.dao.CategoriaDao;
 import edu.uclm.esi.carreful.dao.ProductDao;
+import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
 import edu.uclm.esi.carreful.model.Categoria;
 import edu.uclm.esi.carreful.model.Product;
@@ -36,47 +37,24 @@ public class ProductController extends CookiesController {
 	@Autowired
 	private CategoriaDao categoriaDao;
 	
-	@GetMapping("/buscarImagen/{nombreProducto}")
-	public int buscarImagen(@PathVariable String nombreProducto) {
-		try {
-			return CargaImagenes.getImagenes(nombreProducto);
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-		}
-	}
-	
-	/*@PostMapping("/addAntiguo")
-	public void addAntiguo(@RequestBody Map<String, Object> info) {
-		try {
-			JSONObject jsoProduct = new JSONObject(info);
-			String idCategoria = "" + jsoProduct.optInt("categoria");
-			Categoria categoria = categoriaDao.findById(idCategoria).get();
-			Product product  = new Product();
-			product.setNombre(jsoProduct.getString("nombre"));
-			product.setPrecio(jsoProduct.getString("precio"));
-			product.setCategoria(categoria);
-			productDao.save(product);
-		} catch(Exception e) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-		}
-	}*/
+	private final static String EL_PRODUCTO_NO_EXISTE="El producto no existe";
+	private final static String CARRITO="carrito";
 	
 	@PostMapping("/add")
 	public void add(HttpServletRequest request,@RequestBody Product product) {
-		String email = (String) request.getSession().getAttribute("userEmail");
-		System.out.println(email);
 		try {
+			boolean rol = (boolean) request.getSession().getAttribute("rol");	
+			if(rol!=true) throw new CarrefulException(HttpStatus.FORBIDDEN,"No tiene permiso para añadir un producto a la Base de Datos");
+			
 			Optional<Product> optProduct=productDao.findByNombre(product.getNombre());
 			if(optProduct.isPresent()) {
 				optProduct.get().setCantidad(optProduct.get().getCantidad()+1);
 				productDao.delete(optProduct.get());
-				System.out.println(optProduct.get().getCantidad());
 				productDao.save(optProduct.get());
-				
-
 			}
 			else
 				productDao.save(product);
+				
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 		}
@@ -110,20 +88,20 @@ public class ProductController extends CookiesController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/getPrecio/{id}")
 	public String getPrecio(@PathVariable String id) {
 		try {
 			Optional<Product> optProduct = productDao.findById(id);
 			if (optProduct.isPresent())
 				return ""+optProduct.get().getPrecio();
-			throw new Exception("El producto no existe");
+			throw new CarrefulException(HttpStatus.NOT_FOUND,EL_PRODUCTO_NO_EXISTE);
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 	}
 	
-	@GetMapping("/getUnProducto/{id}")
+	/*@GetMapping("/getUnProducto/{id}")
 	public Product getUnProducto(@PathVariable String id) {
 		try {
 			Optional<Product> optProduct = productDao.findById(id);
@@ -139,15 +117,16 @@ public class ProductController extends CookiesController {
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
-	}
+	}*/
 	
 	@PostMapping("/addAlCarrito/{id}")
 	public Carrito addAlCarrito(HttpServletRequest request, @PathVariable String id) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
 		if (carrito==null) {
 			carrito = new Carrito();
-			request.getSession().setAttribute("carrito", carrito);
+			request.getSession().setAttribute(CARRITO, carrito);
 		}
+		
 		Product producto = productDao.findById(id).get();
 		
 		try {
@@ -165,15 +144,15 @@ public class ProductController extends CookiesController {
 	
 	@PostMapping("/sumarCantidad/{id}")
 	public Carrito sumarCantidad(HttpServletRequest request, @PathVariable String id) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
 		if (carrito==null) {
 			carrito = new Carrito();
-			request.getSession().setAttribute("carrito", carrito);
+			request.getSession().setAttribute(CARRITO, carrito);
 		}
 		Optional<Product> producto=productDao.findById(id);
 		if(producto.isPresent()) {
 			try {
-				if(producto.get().getCantidad()==0) throw new Exception("No hay stock disponible del producto");
+				if(producto.get().getCantidad()==0) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay stock disponible del producto");
 				carrito.add(producto.get(), 1);
 				producto.get().setCantidad(producto.get().getCantidad()-1);
 				productDao.delete(producto.get());
@@ -195,7 +174,7 @@ public class ProductController extends CookiesController {
 			if (optProduct.isPresent())
 				productDao.deleteById(id);
 			else
-				throw new Exception("El producto no existe");
+				throw new CarrefulException(HttpStatus.NOT_FOUND,EL_PRODUCTO_NO_EXISTE);
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
@@ -205,12 +184,12 @@ public class ProductController extends CookiesController {
 	public void borrarProductoDeLaBD(HttpServletRequest request, @PathVariable String nombre) {
 		try {
 			if (request.getSession().getAttribute("userEmail")==null)
-				throw new Exception("No tienes permiso para borrar el producto");
+				throw new CarrefulException(HttpStatus.FORBIDDEN,"No tienes permiso para borrar el producto");
 			Optional<Product> optProduct = productDao.findById(nombre);
 			if (optProduct.isPresent())
 				productDao.deleteById(nombre);
 			else
-				throw new Exception("El producto no existe");
+				throw new CarrefulException(HttpStatus.NOT_FOUND,EL_PRODUCTO_NO_EXISTE);
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
@@ -218,10 +197,10 @@ public class ProductController extends CookiesController {
 	
 	@PostMapping("/borrarDelCarrito/{id}")
 	public Carrito borrarDelCarrito(HttpServletRequest request, @PathVariable String id) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
 		if (carrito==null) {
 			carrito = new Carrito();
-			request.getSession().setAttribute("carrito", carrito);
+			request.getSession().setAttribute(CARRITO, carrito);
 		}
 		Product producto = productDao.findById(id).get();
 

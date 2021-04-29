@@ -17,10 +17,10 @@ public class Email {
 		String smtpHost= "smtp.gmail.com";
 		String startTTLS="true";
 		String port="465";
-		String sender="terrarafael23@gmail.com";		// REMITENTE
-		String serverUser="terrarafael23";	// USUARIO
+		String sender="carrefuloficialrsa@gmail.com";		// REMITENTE
+		String serverUser="carrefuloficialrsa";	// USUARIO
 		String userAutentication= "true";
-		String pwd="marcos22";				// PONER LA CONTRASEÑA
+		String pwd="ansufati@22";				// PONER LA CONTRASEÑA
 		String fallback="true";	
 		
 		properties.put("mail.smtp.host", smtpHost);  
@@ -62,7 +62,7 @@ public class Email {
 			this.sender = sender;
 			this.pwd = pwd;
 		}
-
+		@Override
 		public PasswordAuthentication getPasswordAuthentication() {
             return new PasswordAuthentication(sender, pwd);
         }

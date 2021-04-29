@@ -11,46 +11,35 @@
 define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		'jquery' ], function(ko, app, moduleUtils, accUtils, $) {
 
-	function RegisterViewModel() {
+	function SetNewPwdViewModel() {
 		var self = this;
 		
-		self.userName = ko.observable("");
+		/*var searchParams= new URLSearchParams;
+		var email_url= searchParams.get();*/
 		self.email = ko.observable("");
 		self.pwd1 = ko.observable("");
 		self.pwd2 = ko.observable("");
-		self.picture=ko.observable();
-
+		
 		self.message = ko.observable();
 		self.error = ko.observable();
-		
-		self.setPicture = function(widget, event) {
-			var file = event.target.files[0];
-			var reader = new FileReader();
-			reader.onload = function () {
-				self.picture ("data:image/png;base64," + btoa(reader.result));
-			}
-			reader.readAsBinaryString(file);
-		}
-		
-		self.register = function() {
+				
+		self.setNewPwd = function() {
 			var info = {
-				userName : self.userName(),
 				email : self.email(),
 				pwd1 : self.pwd1(),
 				pwd2 : self.pwd2(),
-				picture : self.picture()
 			};
 			var data = {
 					data : JSON.stringify(info),
-					url : "user/register",
+					url : "user/setNewPwd",
 					type : "put",
 					contentType : 'application/json',
 					success : function(response) {
 						self.error("");
-						self.message("Te hemos enviado un correo para confirmar tu registro");
+						self.message("Contraseña cambiada correctamente, por favor, compruebe su correo electronico");
 					},
 					error : function(response) {
-						self.message("");
+						self.message("Error al cambiar la contraseña");
 						self.error(response.responseJSON.errorMessage);
 					}
 			};
@@ -86,5 +75,5 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		};
 	}
 
-	return RegisterViewModel;
+	return SetNewPwdViewModel;
 });

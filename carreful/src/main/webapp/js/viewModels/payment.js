@@ -1,7 +1,7 @@
 define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		'jquery' ], function(ko, app, moduleUtils, accUtils, $) {
 
-	class PaymentViewModel {
+	class PaymentViewModel{
 		constructor() {
 			var self = this;
 			

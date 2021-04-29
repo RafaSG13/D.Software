@@ -12,31 +12,37 @@ public class Carrito {
 	}
 
 	public void add(Product product, double amount) {
-		OrderedProduct orderedProduct = this.products.get(product.getNombre());
-		if (orderedProduct==null) {
-			orderedProduct = new OrderedProduct(product, amount);
-			this.products.put(product.getNombre(), orderedProduct);
+		OrderedProduct ordered = this.products.get(product.getNombre());
+		if (ordered==null) {
+			ordered = new OrderedProduct(product, amount);
+			this.products.put(product.getNombre(), ordered);
 		} else {
 			orderedProduct.addAmount(amount);
 		}
 	}
 	
 	public void subtract(Product product, double amount) {
-		OrderedProduct orderedProduct = this.products.get(product.getNombre());
-		orderedProduct.subAmount(amount);
+		OrderedProduct ordered = this.products.get(product.getNombre());
+		ordered.subAmount(amount);
 	}
 	
 	public void remove(Product product) {
-		orderedProduct = this.products.get(product.getNombre());
-		this.products.remove(orderedProduct.getName());
+		OrderedProduct ordered = this.products.get(product.getNombre());
+		this.products.remove(ordered.getName());
 	}
 	
 	public double getAmount(Product product) {
-		OrderedProduct orderedProduct = this.products.get(product.getNombre());
-		return orderedProduct.getAmount();
+		OrderedProduct ordered = this.products.get(product.getNombre());
+		return ordered.getAmount();
+	}
+	public double getTotal() {
+		double suma=0;
+		return suma;
 	}
 
 	public Collection<OrderedProduct> getProducts() {
 		return products.values();
 	}
+
+
 }
