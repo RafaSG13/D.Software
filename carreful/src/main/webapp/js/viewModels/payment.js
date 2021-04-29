@@ -29,7 +29,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		connected() {
 			accUtils.announce('Login page loaded.');
 			document.title = "Pago";
-			//this.getCarrito();
+			this.getCarrito();
 			//this.solicitarPreautorizacion();		
 		};
 		
