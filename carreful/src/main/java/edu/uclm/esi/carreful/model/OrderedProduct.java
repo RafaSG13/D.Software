@@ -25,6 +25,9 @@ public class OrderedProduct {
 	public String getName() {
 		return this.product.getNombre();
 	}
+	public double getPrecio() {
+		return this.product.getPrecio();
+	}
 	public String getId() {
 		return this.product.getId();
 	}

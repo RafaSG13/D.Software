@@ -7,6 +7,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			
 			self.stripe = Stripe('pk_test_51IdbtOE3xk4z0l3iOwpaJ3Rp0n58pBWBVBVxrba7Vslzdk28K2SCTtqYgk16LXkXthMQ5kZQQPaTkMr34BLL6BlJ00AKbD4VQZ');
 			self.carrito = ko.observableArray([]);
+			self.total = ko.observable("");
 			
 			self.message = ko.observable();
 			self.error = ko.observable();
@@ -36,7 +37,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		getCarrito(){
 			let self = this;
 			let data = {
-				url : "payments/getCarrito/",
+				url : "payments/getCarrito",
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {
@@ -135,6 +136,27 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 					}
 				}
 			});			
+		}
+		
+		CalcularTotal(){
+			let self = this;
+			
+			let data = {
+				url : "payments/PrecioTotal/",
+				type : "get",
+				contentType : 'application/json',
+				success : function(response) {
+					self.message("");
+					self.total(response);
+					
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+		
+		
 		}
 
 		disconnected() {

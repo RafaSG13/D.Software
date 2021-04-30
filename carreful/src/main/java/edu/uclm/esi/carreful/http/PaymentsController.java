@@ -1,5 +1,6 @@
 package edu.uclm.esi.carreful.http;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,9 @@ import com.stripe.Stripe;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 
+import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
+import edu.uclm.esi.carreful.model.OrderedProduct;
 import edu.uclm.esi.carreful.model.Product;
 import edu.uclm.esi.carreful.tokens.Email;
 
@@ -29,17 +32,18 @@ public class PaymentsController extends CookiesController {
 	}
 	
 	@PostMapping("/solicitarPreautorizacion")
-	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
+	public String solicitarPreautorizacion(HttpServletRequest request) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
+			
 			//Crear el pedido. coger el pedido y por cada uno declarar una variable suma que calcule el coste total. vaya producto a producto a ver si es congelado
 			// si hay un congelado hacer un domicilio_express. Guardar el pedido en la base de datos.
-			
+		
 			
 			
 			PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
 					.setCurrency("eur")
-					.setAmount((long) carrito.getTotal())
+					.setAmount((long) 97)
 					.build();
 			// Create a PaymentIntent with the order amount and currency
 			PaymentIntent intent = PaymentIntent.create(createParams);
@@ -73,6 +77,25 @@ public class PaymentsController extends CookiesController {
 			request.getSession().setAttribute("carrito", carrito);
 		}
 		return carrito;
+	}
+	
+	@GetMapping("/PrecioTotal")
+	public double PrecioTotal(HttpServletRequest request) {
+		double total=0;
+		try {
+			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+			if (carrito==null)
+				throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay carrito en estos momentos");
+			Iterator<OrderedProduct> iterador_productos=carrito.getProducts().iterator();
+			while(iterador_productos.hasNext()) {
+				total+=iterador_productos.next().getPrecio();
+			}
+		}catch(CarrefulException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+		
+	
+		return total;
 	}
 	
 }

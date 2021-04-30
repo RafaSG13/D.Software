@@ -35,10 +35,6 @@ public class Carrito {
 		OrderedProduct ordered = this.products.get(product.getNombre());
 		return ordered.getAmount();
 	}
-	public double getTotal() {
-		double suma=1;
-		return suma;
-	}
 
 	public Collection<OrderedProduct> getProducts() {
 		return products.values();

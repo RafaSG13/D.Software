@@ -155,7 +155,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		getCarrito(){
 			let self = this;
 			let data = {
-				url : "product/getCarrito/",
+				url : "product/getCarrito",
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {
