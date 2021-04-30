@@ -8,7 +8,9 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			self.nombre = ko.observable("");
 			self.precio = ko.observable("");
 			self.cantidad = ko.observable("");
-			self.congelado = ko.observable();
+
+			self.congelado = ko.observable(false);
+
 			self.categoria = ko.observable();
 			
 

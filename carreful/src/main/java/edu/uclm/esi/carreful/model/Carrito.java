@@ -17,7 +17,8 @@ public class Carrito {
 			ordered = new OrderedProduct(product, amount);
 			this.products.put(product.getNombre(), ordered);
 		} else {
-			orderedProduct.addAmount(amount);
+			ordered.addAmount(amount);
+			//hola
 		}
 	}
 	
