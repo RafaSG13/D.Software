@@ -53,8 +53,26 @@ public class ProductController extends CookiesController {
 				productDao.save(optProduct.get());
 			}
 			else
-				System.out.println(product.getCongelado());
 				productDao.save(product);
+				
+		} catch(Exception e) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+		}
+	}
+	
+	@PostMapping("/update")
+	public void update(HttpServletRequest request,@RequestBody Product product) {
+		try {
+			if(request.getSession().getAttribute("rol")==null || (boolean) request.getSession().getAttribute("rol")==false)
+				throw new CarrefulException(HttpStatus.FORBIDDEN,"No tiene permiso para modificar un producto de la Base de Datos");
+	
+			Optional<Product> optProduct=productDao.findByNombre(product.getNombre());
+			if(optProduct.isPresent()) {
+				productDao.delete(optProduct.get());
+				productDao.save(product);
+			}
+			else
+				throw new CarrefulException(HttpStatus.NOT_FOUND,"No se ha encontrado un producto con ese nombre");
 				
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());

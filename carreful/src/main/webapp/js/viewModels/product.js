@@ -97,7 +97,31 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 			
 		}*/
-		
+		update() {
+			var self = this;
+			let info = {
+				nombre : this.nombre(),
+				precio : this.precio(),
+				cantidad: this.cantidad(),
+				categoria : this.categoria(),
+				congelado : this.congelado()
+			};
+			let data = {
+				data : JSON.stringify(info),
+				url : "product/update",
+				type : "post",
+				contentType : 'application/json',
+				success : function(response) {
+					self.message("Producto guardado");
+					self.getProductos_Categoria(info.categoria.id);
+				},
+				error : function(response) {
+					/*self.error(response.responseJSON.errorMessage);*/
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+		}
 		
 		getCategorias() {
 			let self = this;
