@@ -49,11 +49,11 @@ public class ProductController extends CookiesController {
 			Optional<Product> optProduct=productDao.findByNombre(product.getNombre());
 			if(optProduct.isPresent()) {
 				optProduct.get().setCantidad(optProduct.get().getCantidad()+product.getCantidad());
+				optProduct.get().setNombre(product.getNombre());
 				productDao.delete(optProduct.get());
 				productDao.save(optProduct.get());
 			}
 			else
-				System.out.println(product.getCongelado());
 				productDao.save(product);
 				
 		} catch(Exception e) {
@@ -141,7 +141,8 @@ public class ProductController extends CookiesController {
 		
 		try {
 			if(producto.getCantidad()==0) throw new Exception("No hay stock disponible del producto");
-			carrito.add(producto, 1);			
+			carrito.add(producto, 1);
+			
 		}catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
