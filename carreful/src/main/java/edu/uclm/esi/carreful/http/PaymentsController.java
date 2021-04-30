@@ -32,10 +32,12 @@ public class PaymentsController extends CookiesController {
 	}
 	
 	@PostMapping("/solicitarPreautorizacion")
-	public String solicitarPreautorizacion(HttpServletRequest request) {
+	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
-			
+			JSONObject json_total = new JSONObject(info);
+			double precio=json_total.optDouble("total");
+			System.out.println(precio);
 			//Crear el pedido. coger el pedido y por cada uno declarar una variable suma que calcule el coste total. vaya producto a producto a ver si es congelado
 			// si hay un congelado hacer un domicilio_express. Guardar el pedido en la base de datos.
 		
@@ -43,7 +45,7 @@ public class PaymentsController extends CookiesController {
 			
 			PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
 					.setCurrency("eur")
-					.setAmount((long) 97)
+					.setAmount((long) PrecioTotal(request)*100)
 					.build();
 			// Create a PaymentIntent with the order amount and currency
 			PaymentIntent intent = PaymentIntent.create(createParams);
@@ -88,13 +90,12 @@ public class PaymentsController extends CookiesController {
 				throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay carrito en estos momentos");
 			Iterator<OrderedProduct> iterador_productos=carrito.getProducts().iterator();
 			while(iterador_productos.hasNext()) {
-				total+=iterador_productos.next().getPrecio();
+				OrderedProduct aux = iterador_productos.next();
+				total+=aux.getAmount()*aux.getPrecio();
 			}
 		}catch(CarrefulException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
-		
-	
 		return total;
 	}
 	
