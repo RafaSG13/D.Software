@@ -100,6 +100,7 @@
         		<th>Producto</th>
         		<th>Precio</th>
         		<th>Stock</th>
+        		<th>Congelado</th>
      
         	</tr>
         	<!-- ko foreach : producto_categoria -->
@@ -107,7 +108,8 @@
         		   
         			<td data-bind="html : nombre"></td>
         			<td data-bind="html : precio"></td>
-        				<td data-bind="html : cantidad"></td>
+        			<td data-bind="html : cantidad"></td>
+        			<td data-bind="html : congelado"></td>
         			<td>
         				<button data-bind="click : function() {$parent.eliminarProducto(id);}">Eliminar</button>
         			</td>

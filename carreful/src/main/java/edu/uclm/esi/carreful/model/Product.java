@@ -69,7 +69,7 @@ public class Product {
 		this.cantidad = cantidad;
 	}
 
-	public boolean isCongelado() {
+	public boolean getCongelado() {
 		return congelado;
 	}
 

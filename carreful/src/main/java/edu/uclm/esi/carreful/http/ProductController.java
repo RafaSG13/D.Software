@@ -43,11 +43,9 @@ public class ProductController extends CookiesController {
 	@PostMapping("/add")
 	public void add(HttpServletRequest request,@RequestBody Product product) {
 		try {
-			if(request.getSession().getAttribute("rol")==null)
+			if(request.getSession().getAttribute("rol")==null || (boolean) request.getSession().getAttribute("rol")==false)
 				throw new CarrefulException(HttpStatus.FORBIDDEN,"No tiene permiso para añadir un producto a la Base de Datos");
-			boolean rol = (boolean) request.getSession().getAttribute("rol");	
-			if(rol!=true) throw new CarrefulException(HttpStatus.FORBIDDEN,"No tiene permiso para añadir un producto a la Base de Datos");
-			
+	
 			Optional<Product> optProduct=productDao.findByNombre(product.getNombre());
 			if(optProduct.isPresent()) {
 				optProduct.get().setCantidad(optProduct.get().getCantidad()+product.getCantidad());
@@ -55,6 +53,7 @@ public class ProductController extends CookiesController {
 				productDao.save(optProduct.get());
 			}
 			else
+				System.out.println(product.getCongelado());
 				productDao.save(product);
 				
 		} catch(Exception e) {

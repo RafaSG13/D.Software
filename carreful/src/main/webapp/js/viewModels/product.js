@@ -8,7 +8,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			self.nombre = ko.observable("");
 			self.precio = ko.observable("");
 			self.cantidad = ko.observable("");
-			self.congelado = ko.observable("");
+			self.congelado = ko.observable();
 			self.categoria = ko.observable();
 			
 
@@ -43,7 +43,8 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				nombre : this.nombre(),
 				precio : this.precio(),
 				cantidad: this.cantidad(),
-				categoria : this.categoria()
+				categoria : this.categoria(),
+				congelado : this.congelado()
 			};
 			let data = {
 				data : JSON.stringify(info),
@@ -78,7 +79,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}*/
 		
-		getUnProducto(id) {
+		/*getUnProducto(id) {
 			let self = this;
 			let data = {
 				url : "product/getUnProducto/"+ id,
@@ -93,7 +94,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			};
 			$.ajax(data);
 			
-		}
+		}*/
 		
 		
 		getCategorias() {
@@ -134,7 +135,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		
 		eliminarProducto(id) {
 			let self = this;
-			let c = categoria.id;
 			let data = {
 				url : "product/borrarProducto/" + id,
 				type : "delete",
