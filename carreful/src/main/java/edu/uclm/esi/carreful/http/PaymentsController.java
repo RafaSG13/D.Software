@@ -37,7 +37,6 @@ public class PaymentsController extends CookiesController {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
 			JSONObject json_total = new JSONObject(info);
 			double precio=json_total.optDouble("total");
-			System.out.println(precio);
 			//Crear el pedido. coger el pedido y por cada uno declarar una variable suma que calcule el coste total. vaya producto a producto a ver si es congelado
 			// si hay un congelado hacer un domicilio_express. Guardar el pedido en la base de datos.
 		
@@ -65,6 +64,9 @@ public class PaymentsController extends CookiesController {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
 			Email correo = new Email();
 			correo.send((String) request.getSession().getAttribute("userEmail"),"Compra realizada","La compra de su pedido ha sido realizada correctamente");
+			
+			//Crear el pedido
+			
 			return "Compra realizada con exito";
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

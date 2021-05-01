@@ -17,10 +17,13 @@
 		        <span id="button-text" data-bind="click : solicitarPreautorizacion()">Pay now</span>
 		      </button>
 		      <p id="card-error" role="alert"></p>
-		      <p class="result-message hidden">
-		        Payment succeeded, see the result in your
-		        <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again
-		      </p>
+		        <input type="radio" id="recoger" value="recoger" name="tipo_envio" data-bind="checked : envio" checked="checked">
+  				<label for="recoger">A Recoger</label><br>
+				<input type="radio" id="domicilio" value="domicilio" name="tipo_envio" data-bind="checked : envio">
+  				<label for="domicilio">A domicilio</label><br>
+  				<input type="radio" id="express" value="express" name="tipo_envio" data-bind="checked : envio">
+  				<label for="express">A domicilio Express</label><br>
+
 		    </form>
         </div>
          <div>
@@ -37,10 +40,9 @@
         					</tr>
         				<!-- /ko -->
         				<tr>
-        				<th>Precio Total</th>
-        				<td data-bind="html : total"></td>
+        					<th>Precio Total</th>
+        					<td data-bind="html : total"></td>
         				</tr>
-        				
         		</table>
      		</div>
     </div>

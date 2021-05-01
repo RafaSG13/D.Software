@@ -8,6 +8,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			self.stripe = Stripe('pk_test_51IdbtOE3xk4z0l3iOwpaJ3Rp0n58pBWBVBVxrba7Vslzdk28K2SCTtqYgk16LXkXthMQ5kZQQPaTkMr34BLL6BlJ00AKbD4VQZ');
 			self.carrito = ko.observableArray([]);
 			self.total = ko.observable("0");
+			self.envio = ko.observable("");
 			
 			self.message = ko.observable();
 			self.error = ko.observable();
@@ -55,7 +56,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		
 		solicitarPreautorizacion() {
 			let self = this;
-			
 			let info = {
 				total : this.total()
 			};
