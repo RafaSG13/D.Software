@@ -22,6 +22,7 @@
 		    background-color: #000099;
 }
 	</style>
+
 </head>
 
 <div class="oj-hybrid-applayout-page">
@@ -64,7 +65,8 @@
                        return item.nombre;
                    }, value : categoria"></select>
             <button data-bind="click : add">Guardar producto</button>
-            
+            <button data-bind="click : update">Modificar producto</button>
+
             <div data-bind="html : message" style="color : blue"></div>
             <div data-bind="html : error" style="color : red"></div>
         </div>
@@ -94,6 +96,7 @@
          
      <div style="float:left;">
 		<h2>Productos</h2>
+
        <table>
         	<tr>
         		<th>Producto</th>
