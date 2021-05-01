@@ -6,6 +6,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.bind.annotation.GetMapping;
+
+import edu.uclm.esi.carreful.model.Carrito;
+
 public abstract class CookiesController {
 	public final static String COOKIE_NAME = "laCookie";
 	public final static String COOKIE_PATH = "/";
@@ -33,5 +37,6 @@ public abstract class CookiesController {
 		cookie.setMaxAge(30*24*60*60);
 		response.addCookie(cookie);
 		return cookie;
-	}
+	}	
+		
 }
