@@ -1,5 +1,6 @@
 package edu.uclm.esi.carreful.http;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 
 import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
+import edu.uclm.esi.carreful.model.Corder;
 import edu.uclm.esi.carreful.model.OrderedProduct;
 import edu.uclm.esi.carreful.model.Product;
 import edu.uclm.esi.carreful.tokens.Email;
@@ -35,16 +37,10 @@ public class PaymentsController extends CookiesController {
 	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
-			JSONObject json_total = new JSONObject(info);
-			double precio=json_total.optDouble("total");
-			//Crear el pedido. coger el pedido y por cada uno declarar una variable suma que calcule el coste total. vaya producto a producto a ver si es congelado
-			// si hay un congelado hacer un domicilio_express. Guardar el pedido en la base de datos.
-		
-			
-			
+			if(carrito==null) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay productos para pagar aun");
 			PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
 					.setCurrency("eur")
-					.setAmount((long) PrecioTotal(request)*100)
+					.setAmount((long) PrecioTotal(request)*100+1)
 					.build();
 			// Create a PaymentIntent with the order amount and currency
 			PaymentIntent intent = PaymentIntent.create(createParams);
@@ -62,11 +58,12 @@ public class PaymentsController extends CookiesController {
 	public String confirmarPedido(HttpServletRequest request) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
+			Corder pedido = new Corder();
+			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
+			
 			Email correo = new Email();
-			correo.send((String) request.getSession().getAttribute("userEmail"),"Compra realizada","La compra de su pedido ha sido realizada correctamente");
-			
-			//Crear el pedido
-			
+			correo.send("mrirgon@gmail.com","Compra realizada","La compra de su pedido ha sido realizada correctamente\n"+pedido.getPedido());
+			//(String) request.getSession().getAttribute("userEmail")
 			return "Compra realizada con exito";
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -99,6 +96,15 @@ public class PaymentsController extends CookiesController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 		return total;
+	}
+	public String sacarProductos(Iterator<OrderedProduct> productos){
+		String pedido = "";
+		while(productos.hasNext()) {
+			OrderedProduct aux = productos.next();
+			pedido+="Nombre : "+aux.getName()+" Cantidad : "+aux.getAmount()+" Precio : "+aux.getPrecio()+"\n";
+		}
+		return pedido;
+		
 	}
 	
 }

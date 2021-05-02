@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import org.springframework.data.annotation.Transient;
 
@@ -16,9 +17,10 @@ public class Corder {
 	private String id;
 	private double precioTotal;
 	private String state;
-	//@Transient
-	//private TipoPedido tipo;
-	
+	private String pedido;
+	@Transient @OneToOne
+	private TipoPedido tipo;
+	 
 	public Corder() {
 		this.id = UUID.randomUUID().toString();
 	}
@@ -44,11 +46,19 @@ public class Corder {
 		this.state = state;
 	}
 
-	/*public TipoPedido getTipo() {
-		return tipo;
+	public String getPedido() {
+		return pedido;
 	}
 
-	public void setTipo(TipoPedido tipo) {
-		this.tipo = tipo;
-	}*/
+	public void setPedido(String pedido) {
+		this.pedido = pedido;
+	}
+
+	public TipoPedido getTipo() throws InstantiationException, IllegalAccessException {
+		return tipo.getClass().newInstance();
+	}
+
+	public void setTipo(TipoPedido tipo) throws InstantiationException, IllegalAccessException {
+		this.tipo = tipo.getClass().newInstance();
+	}
 }

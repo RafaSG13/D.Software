@@ -7,7 +7,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			
 			self.stripe = Stripe('pk_test_51IdbtOE3xk4z0l3iOwpaJ3Rp0n58pBWBVBVxrba7Vslzdk28K2SCTtqYgk16LXkXthMQ5kZQQPaTkMr34BLL6BlJ00AKbD4VQZ');
 			self.carrito = ko.observableArray([]);
-			self.total = ko.observable("0");
+			self.total = ko.observable(0);
 			self.envio = ko.observable("");
 			
 			self.message = ko.observable();
@@ -160,8 +160,25 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				}
 			};
 			$.ajax(data);
+		}
 		
-		
+		Probando(){
+			let self = this;
+
+			let data = {
+				url : "payments/confirmarPedido",
+				type : "get",
+				contentType : 'application/json',
+				success : function(response) {
+					self.message(response);
+					
+					
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
 		}
 
 		disconnected() {
