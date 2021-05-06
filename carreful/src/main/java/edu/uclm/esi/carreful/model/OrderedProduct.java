@@ -28,7 +28,7 @@ public class OrderedProduct {
 	public double getPrecio() {
 		return this.product.getPrecio();
 	}
-	public String getId() {
-		return this.product.getId();
+	public boolean isCongelado() {
+		return this.product.getCongelado();
 	}
 }

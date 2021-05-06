@@ -1,8 +1,9 @@
 define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		'jquery' ], function(ko, app, moduleUtils, accUtils, $) {
 
-	class PaymentViewModel {
+	class PaymentViewModel{
 		constructor() {
+	
 			var self = this;
 			
 			self.stripe = Stripe('pk_test_51IdbtOE3xk4z0l3iOwpaJ3Rp0n58pBWBVBVxrba7Vslzdk28K2SCTtqYgk16LXkXthMQ5kZQQPaTkMr34BLL6BlJ00AKbD4VQZ');
@@ -50,8 +51,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				}
 			};
 			$.ajax(data);
-		
-		
+
 		}
 		
 		solicitarPreautorizacion() {
@@ -164,9 +164,10 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		
 		Probando(){
 			let self = this;
+			let prueba = envio;
 
 			let data = {
-				url : "payments/confirmarPedido",
+				url : "payments/confirmarPedido/"+ envio,
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {

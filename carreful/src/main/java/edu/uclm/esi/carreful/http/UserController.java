@@ -54,23 +54,6 @@ public class UserController extends CookiesController {
 		}
 	}
 	
-	@GetMapping("/recoverPwd")
-	public void recoverPwd(@RequestParam String email) {
-		try {
-			User user = userDao.findByEmail(email);
-			if (user!=null) {
-				Token token = new Token(email);
-				tokenDao.save(token);
-				Email smtp = new Email();
-				String texto = "Para recuperar tu contraseña, pulsa aquí: " + 
-					"<a href='http://localhost/user/usarToken/" + token.getId() + "'>aquí</a>";
-				smtp.send(user.getEmail(), "Carreful: recuperación de contraseña", texto);
-			}
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-		}
-	}
-	
 	@PostMapping("/login")
 	public void login(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
@@ -150,5 +133,22 @@ public class UserController extends CookiesController {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 		}
 		
+	}
+	
+	@GetMapping("/recoverPwd")
+	public void recoverPwd(@RequestParam String email) {
+		try {
+			User user = userDao.findByEmail(email);
+			if (user!=null) {
+				Token token = new Token(email);
+				tokenDao.save(token);
+				Email smtp = new Email();
+				String texto = "Para recuperar tu contraseña, pulsa aquí: " + 
+					"<a href='http://localhost/user/usarToken/" + token.getId() + "'>aquí</a>";
+				smtp.send(user.getEmail(), "Carreful: recuperación de contraseña", texto);
+			}
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+		}
 	}
 }

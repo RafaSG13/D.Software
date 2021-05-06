@@ -56,8 +56,8 @@ public class Corder {
 		return tipo;
 	}
 
-	public void setTipo(TipoPedido tipo) {
-		this.tipo = tipo;
+	public void setTipo(Object tipo) {
+		this.tipo= (TipoPedido) tipo;
 	}
 
 	
