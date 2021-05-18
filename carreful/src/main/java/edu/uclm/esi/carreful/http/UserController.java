@@ -146,6 +146,7 @@ public class UserController extends CookiesController {
 				String texto = "Para recuperar tu contraseña, pulsa aquí: " + 
 					"<a href='http://localhost/user/usarToken/" + token.getId() + "'>aquí</a>";
 				smtp.send(user.getEmail(), "Carreful: recuperación de contraseña", texto);
+				System.out.println();
 			}
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
