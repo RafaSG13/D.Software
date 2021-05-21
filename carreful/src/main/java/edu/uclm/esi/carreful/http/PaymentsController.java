@@ -27,7 +27,9 @@ import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
 import edu.uclm.esi.carreful.model.Corder;
 import edu.uclm.esi.carreful.model.OrderedProduct;
+import edu.uclm.esi.carreful.model.User;
 import edu.uclm.esi.carreful.tokens.Email;
+import edu.uclm.esi.carreful.tokens.Token;
 
 @RestController
 @RequestMapping("payments")
@@ -74,12 +76,13 @@ public class PaymentsController extends CookiesController {
 	
 	@GetMapping("/confirmarPedido/{envio}")
 	public String confirmarPedido(HttpServletRequest request, @PathVariable String envio) {
+
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
 			if(hayCongelados(carrito) && envio.equals("domicilio")) 
-				envio="express";
+				envio="Express";
 			
-			Corder pedido = new Corder();
+			/*Corder pedido = new Corder();
 			pedido.setPrecioTotal(PrecioTotal(request)*100);
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
@@ -88,11 +91,21 @@ public class PaymentsController extends CookiesController {
 			System.out.println(p.getName());
 			
 			pedido.setTipo(p.newInstance());
+			*/
 			
-			Email correo = new Email();
-			correo.send((String) request.getSession().getAttribute("userEmail"),"Compra realizada","La compra de su pedido ha sido realizada correctamente\n"+pedido.getPedido());
+			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
+			if (user!=null) {
+				Token token = new Token((String) request.getSession().getAttribute("userEmail"));
+				tokenDao.save(token);
+				Email smtp = new Email();
+				String texto = "Su pedido es el siguiente: " + 
+						"<a href='http://localhost/user/usarToken/" + token.getId() + "'>aquí</a>";
+				smtp.send(user.getEmail(), "Carreful confirmacion de Pedido.", texto);
+				JSONObject j = new JSONObject();
 			
+			}
 			return "Compra realizada con exito";
+			
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}

@@ -1,0 +1,71 @@
+<head>
+	<style>
+	input{
+		  border: 3px solid #ccc;
+		  -webkit-transition: 0.5s;
+		  transition: 0.5s;
+		  outline: none;
+		}
+
+		input:focus {
+		  border: 3px solid #555;
+		}
+		.boton_categoria {
+			background-color: #04A6FF;
+    		transition-duration: 0.4s;
+			color: white;
+			border-radius: 4px;
+			font-size: 16px;
+}
+
+		.boton_categoria:hover {
+		    background-color: #000099;
+}
+	</style>
+
+</head>
+
+<div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top">
+    <header role="banner" class="oj-hybrid-applayout-header">
+      <oj-module config="[[headerConfig]]"></oj-module>
+    </header>
+  </div>
+  <!-- This is where your main page content will be loaded -->
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+      <div class="oj-hybrid-padding">
+        <h1>Pedido</h1>
+        
+
+         
+     <div style="float:left;">
+		<h2>Productos</h2>
+
+       <table>
+        	<tr>
+        		<th>Producto</th>
+        		<th>Precio</th>
+        		<th>Stock</th>
+				
+     
+        	</tr>
+        	<!-- ko foreach : producto_categoria -->
+        		<tr>
+        		   
+        			<td data-bind="html : nombre"></td>
+        			<td data-bind="html : precio"></td>
+        			<td data-bind="html : cantidad"></td>
+
+        			<td>
+        				<button data-bind="click : function() {$parent.eliminarPedido(id);}">Eliminar</button>
+        			</td>
+        		
+        		</tr>
+        	<!-- /ko -->
+        </table>
+       </div>
+      </div>
+    </div>
+  </div>
+</div>
