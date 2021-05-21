@@ -39,7 +39,7 @@ public class UserController extends CookiesController {
 	@Autowired
 	TokenDao tokenDao;	
 	
-	@GetMapping("usarToken/{tokenId}")
+	/*@GetMapping("usarToken/{tokenId}")
 	public void usarToken(HttpServletResponse response, @PathVariable String tokenId) throws IOException {
 		Optional<Token> optToken = tokenDao.findById(tokenId);
 		if (optToken.isPresent()) {
@@ -52,7 +52,7 @@ public class UserController extends CookiesController {
 		} else {
 			response.sendError(404, "El token no existe");
 		}
-	}
+	}*/
 	
 	@PostMapping("/login")
 	public void login(HttpServletRequest request, @RequestBody Map<String, Object> info) {
@@ -146,7 +146,7 @@ public class UserController extends CookiesController {
 				String texto = "Para recuperar tu contraseña, pulsa aquí: " + 
 					"<a href='http://localhost/user/usarToken/" + token.getId() + "'>aquí</a>";
 				smtp.send(user.getEmail(), "Carreful: recuperación de contraseña", texto);
-				System.out.println();
+				
 			}
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());

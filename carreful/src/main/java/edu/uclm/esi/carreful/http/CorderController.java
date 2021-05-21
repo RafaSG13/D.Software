@@ -12,7 +12,7 @@ import edu.uclm.esi.carreful.dao.CorderDao;
 import edu.uclm.esi.carreful.model.Corder;
 
 @RestController
-@RequestMapping("orders")
+@RequestMapping("corder")
 public class CorderController extends CookiesController {
 	
 	@Autowired
