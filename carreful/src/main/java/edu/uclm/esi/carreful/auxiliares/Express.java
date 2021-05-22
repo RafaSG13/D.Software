@@ -14,6 +14,7 @@ public class Express extends TipoPedido{
 		this.direccion= direccion;
 		
 	}
+	public Express() {}
 	
 	
 	public String getEmail_usuario() {

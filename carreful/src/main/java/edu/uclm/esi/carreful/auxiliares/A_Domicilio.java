@@ -15,6 +15,8 @@ public class A_Domicilio extends TipoPedido{
 		
 	}
 	
+	public A_Domicilio() {}
+	
 	
 	public String getEmail_usuario() {
 		return email_usuario;

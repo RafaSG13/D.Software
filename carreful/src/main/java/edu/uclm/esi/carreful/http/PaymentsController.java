@@ -48,14 +48,15 @@ public class PaymentsController extends CookiesController {
 				envio="express";
 			
 			Corder pedido = new Corder();
-			pedido.setPrecioTotal(PrecioTotal(request)*100);
+			//pedido.setPrecioTotal(PrecioTotal(request)*100);
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
-			Class<?> p = Class.forName(envio);
+			Class p = Class.forName(envio);
+			Object objeto = p.newInstance();
 			
 			System.out.println(p.getName());
 			
-			pedido.setTipo(p.newInstance());
+			pedido.setTipo(envio);
 			
 			
 			PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
@@ -76,22 +77,21 @@ public class PaymentsController extends CookiesController {
 	
 	@GetMapping("/confirmarPedido/{envio}")
 	public String confirmarPedido(HttpServletRequest request, @PathVariable String envio) {
-
+		String valor = envio;
+		System.out.print(valor);
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
-			if(hayCongelados(carrito) && envio.equals("domicilio")) 
+			if(hayCongelados(carrito) && envio.equals("A_Domicilio")) 
 				envio="Express";
 			
-			/*Corder pedido = new Corder();
+			Corder pedido = new Corder();
 			pedido.setPrecioTotal(PrecioTotal(request)*100);
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
-			Class<?> p = Class.forName(envio);
+
+			pedido.setTipo(valor);
 			
-			System.out.println(p.getName());
-			
-			pedido.setTipo(p.newInstance());
-			*/
+			System.out.println(pedido.getTipo().getClass().getName());
 			
 			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
 			if (user!=null) {
@@ -101,7 +101,7 @@ public class PaymentsController extends CookiesController {
 				String texto = "Su pedido es el siguiente: " + 
 						"<a href='http://localhost/user/usarToken/" + token.getId() + "'>aquí</a>";
 				smtp.send(user.getEmail(), "Carreful confirmacion de Pedido.", texto);
-				JSONObject j = new JSONObject();
+				
 			
 			}
 			return "Compra realizada con exito";
@@ -110,6 +110,7 @@ public class PaymentsController extends CookiesController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
+	
 	
 	@GetMapping("/getCarrito")
 	public Carrito getCarrito(HttpServletRequest request) {

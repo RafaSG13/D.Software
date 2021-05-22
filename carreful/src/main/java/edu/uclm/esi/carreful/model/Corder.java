@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import edu.uclm.esi.carreful.auxiliares.TipoPedido;
+import edu.uclm.esi.carreful.auxiliares.*;
 
 @Entity
 public class Corder {
@@ -56,8 +56,13 @@ public class Corder {
 		return tipo;
 	}
 
-	public void setTipo(Object tipo) {
-		this.tipo= (TipoPedido) tipo;
+	public void setTipo(String tipo) {
+		if(tipo.equals("A_Domicilio"))
+			this.tipo=new A_Domicilio();
+		if(tipo.equals("Recoger"))
+			this.tipo=new Recoger();
+		if(tipo.equals("Express"))
+			this.tipo=new Express();
 	}
 
 	
