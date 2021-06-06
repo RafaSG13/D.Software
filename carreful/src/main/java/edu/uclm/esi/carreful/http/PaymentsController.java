@@ -74,24 +74,26 @@ public class PaymentsController extends CookiesController {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@GetMapping("/confirmarPedido/{envio}")
 	public String confirmarPedido(HttpServletRequest request, @PathVariable String envio) {
-
+		String valor = envio;
+		
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
 			if(hayCongelados(carrito) && envio.equals("domicilio")) 
 				envio="Express";
 			
-			/*Corder pedido = new Corder();
-			pedido.setPrecioTotal(PrecioTotal(request)*100);
+			Corder pedido = new Corder();
+			/*pedido.setPrecioTotal(PrecioTotal(request)*100);*/
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
-			Class<?> p = Class.forName(envio);
+			Class p = Class.forName(valor);
+			Object objeto = p.newInstance();
 			
-			System.out.println(p.getName());
 			
 			pedido.setTipo(p.newInstance());
-			*/
+			System.out.println(pedido.getTipo().getClass().getName());
 			
 			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
 			if (user!=null) {

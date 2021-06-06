@@ -165,6 +165,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		
 		Probando(){
 			let self = this;
+			let prueba = self.envio();
 			let data = {
 				url : "payments/confirmarPedido/"+ self.envio(),
 				type : "get",
