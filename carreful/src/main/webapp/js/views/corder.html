@@ -42,28 +42,7 @@
      <div style="float:left;">
 		<h2>Productos</h2>
 
-       <table>
-        	<tr>
-        		<th>Producto</th>
-        		<th>Precio</th>
-        		<th>Stock</th>
-				
-     
-        	</tr>
-        	<!-- ko foreach : producto_categoria -->
-        		<tr>
-        		   
-        			<td data-bind="html : nombre"></td>
-        			<td data-bind="html : precio"></td>
-        			<td data-bind="html : cantidad"></td>
 
-        			<td>
-        				<button data-bind="click : function() {$parent.eliminarPedido(id);}">Eliminar</button>
-        			</td>
-        		
-        		</tr>
-        	<!-- /ko -->
-        </table>
        </div>
       </div>
     </div>

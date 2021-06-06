@@ -57,8 +57,7 @@
         <div>
             <input type="text" data-bind="value : nombre" placeholder="Nombre del producto">
             <input type="text" data-bind="value : precio" placeholder="Precio">
-            <input type="number" data-bind="value : cantidad" placeholder="Cantidad" min="1" onkeyup="if(this.value<1){this.value=1}">
-            Congelado<input type="checkbox" data-bind="checked : congelado">
+           
             
             <select data-bind="options: categorias,
                    optionsText: function(item) {
@@ -102,7 +101,7 @@
         		<th>Producto</th>
         		<th>Precio</th>
         		<th>Stock</th>
-				<th>Congelado</th>
+				
      
         	</tr>
         	<!-- ko foreach : producto_categoria -->
@@ -111,7 +110,6 @@
         			<td data-bind="html : nombre"></td>
         			<td data-bind="html : precio"></td>
         			<td data-bind="html : cantidad"></td>
-					<td data-bind="html : congelado"></td>
         			<td>
         				<button data-bind="click : function() {$parent.eliminarProducto(id);}">Eliminar</button>
         			</td>

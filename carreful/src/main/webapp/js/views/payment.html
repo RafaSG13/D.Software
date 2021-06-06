@@ -16,12 +16,7 @@
 		        <div class="spinner hidden" id="spinner"></div>
 		        <span id="button-text" data-bind="click : solicitarPreautorizacion()">Pay now</span>
 		      </button>
-		     <button data-bind="click : Probando()">Probar creacion</button>
-		      <p id="card-error" role="alert"></p>
-		        <div><input type="radio" value="Recoger" name="tipo_envio" data-bind="checked : envio">A Recoger</div>
-				<div><input type="radio" value="A_Domicilio" name="tipo_envio" data-bind="checked : envio"/>A domicilio</div>
-  				<div><input type="radio" value="Express" name="tipo_envio" data-bind="checked : envio"/>A domicilio Express</div>
-				 
+		     <input type="text" data-bind="value : cupon" placeholder="Codigo del Cupon">	 
 		    </form>
 	
         </div>

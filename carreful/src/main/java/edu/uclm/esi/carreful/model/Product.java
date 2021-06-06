@@ -14,7 +14,7 @@ public class Product {
 	private String nombre;
 	private double precio;
 	private int cantidad;
-	private boolean congelado;
+
 
 	@ManyToOne
 	private Categoria categoria;
@@ -69,11 +69,5 @@ public class Product {
 		this.cantidad = cantidad;
 	}
 
-	public boolean getCongelado() {
-		return congelado;
-	}
 
-	public void setCongelado(boolean congelado) {
-		this.congelado = congelado;
-	}
 }

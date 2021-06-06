@@ -1,6 +1,7 @@
 package edu.uclm.esi.carreful.http;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -8,11 +9,16 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
 
 import edu.uclm.esi.carreful.dao.TokenDao;
 import edu.uclm.esi.carreful.dao.UserDao;
+import edu.uclm.esi.carreful.exceptions.CarrefulException;
+import edu.uclm.esi.carreful.model.Carrito;
+import edu.uclm.esi.carreful.model.OrderedProduct;
 import edu.uclm.esi.carreful.tokens.Token;
 
 
@@ -66,6 +72,32 @@ public abstract class CookiesController {
 		}
 	}
 	
+	@GetMapping("/getCarrito")
+	public Carrito getCarrito(HttpServletRequest request) {
+		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		if (carrito==null) {
+			carrito = new Carrito();
+			request.getSession().setAttribute("carrito", carrito);
+		}
+		return carrito;
+	}
 	
+	@GetMapping("/PrecioTotal")
+	public double PrecioTotal(HttpServletRequest request) {
+		double total=0;
+		try {
+			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+			if (carrito==null)
+				throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay carrito en estos momentos");
+			Iterator<OrderedProduct> iterador_productos=carrito.getProducts().iterator();
+			while(iterador_productos.hasNext()) {
+				OrderedProduct aux = iterador_productos.next();
+				total+=aux.getAmount()*aux.getPrecio();
+			}
+		}catch(CarrefulException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+		return total;
+	}
 		
 }

@@ -8,9 +8,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			self.nombre = ko.observable("");
 			self.precio = ko.observable("");
 			self.cantidad = ko.observable("");
-
-			self.congelado = ko.observable(false);
-
 			self.categoria = ko.observable();
 			
 
@@ -65,38 +62,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
-		/*getProductos() {
-			let self = this;
-			let data = {
-				url : "product/getTodos",
-				type : "get",
-				contentType : 'application/json',
-				success : function(response) {
-					self.productos(response);
-				},
-				error : function(response) {
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-		}*/
-		
-		/*getUnProducto(id) {
-			let self = this;
-			let data = {
-				url : "product/getUnProducto/"+ id,
-				type : "get",
-				contentType : 'application/json',
-				success : function(response) {
-					 response.categoria.id;
-				},
-				error : function(response) {
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-			
-		}*/
 		update() {
 			var self = this;
 			let info = {
@@ -104,7 +69,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				precio : this.precio(),
 				cantidad: this.cantidad(),
 				categoria : this.categoria(),
-				congelado : this.congelado()
 			};
 			let data = {
 				data : JSON.stringify(info),

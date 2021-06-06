@@ -28,7 +28,5 @@ public class OrderedProduct {
 	public double getPrecio() {
 		return this.product.getPrecio();
 	}
-	public boolean isCongelado() {
-		return this.product.getCongelado();
-	}
+
 }
