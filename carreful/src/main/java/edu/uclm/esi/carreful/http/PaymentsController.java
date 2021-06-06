@@ -21,8 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.stripe.Stripe;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
-
-import edu.uclm.esi.carreful.auxiliares.TipoPedido;
 import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
 import edu.uclm.esi.carreful.model.Corder;
@@ -39,24 +37,19 @@ public class PaymentsController extends CookiesController {
 	}
 	
 	@PostMapping("/solicitarPreautorizacion")
-	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info, @RequestParam String envio) {
+	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
 			if(carrito==null) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay productos para pagar aun");
 			
-			if(hayCongelados(carrito) && envio.equals("domicilio")) 
-				envio="express";
+	
 			
 			Corder pedido = new Corder();
 			//pedido.setPrecioTotal(PrecioTotal(request)*100);
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
-			Class p = Class.forName(envio);
-			Object objeto = p.newInstance();
-			
-			System.out.println(p.getName());
-			
-			pedido.setTipo(envio);
+
+
 			
 			
 			PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
@@ -75,23 +68,16 @@ public class PaymentsController extends CookiesController {
 		}
 	}
 	
-	@GetMapping("/confirmarPedido/{envio}")
-	public String confirmarPedido(HttpServletRequest request, @PathVariable String envio) {
-		String valor = envio;
-		System.out.print(valor);
+	@GetMapping("/confirmarPedido")
+	public String confirmarPedido(HttpServletRequest request) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
-			if(hayCongelados(carrito) && envio.equals("A_Domicilio")) 
-				envio="Express";
 			
+				
 			Corder pedido = new Corder();
 			pedido.setPrecioTotal(PrecioTotal(request)*100);
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
-
-			pedido.setTipo(valor);
-			
-			System.out.println(pedido.getTipo().getClass().getName());
 			
 			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
 			if (user!=null) {
@@ -112,33 +98,6 @@ public class PaymentsController extends CookiesController {
 	}
 	
 	
-	@GetMapping("/getCarrito")
-	public Carrito getCarrito(HttpServletRequest request) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
-		if (carrito==null) {
-			carrito = new Carrito();
-			request.getSession().setAttribute("carrito", carrito);
-		}
-		return carrito;
-	}
-	
-	@GetMapping("/PrecioTotal")
-	public double PrecioTotal(HttpServletRequest request) {
-		double total=0;
-		try {
-			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
-			if (carrito==null)
-				throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay carrito en estos momentos");
-			Iterator<OrderedProduct> iterador_productos=carrito.getProducts().iterator();
-			while(iterador_productos.hasNext()) {
-				OrderedProduct aux = iterador_productos.next();
-				total+=aux.getAmount()*aux.getPrecio();
-			}
-		}catch(CarrefulException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}
-		return total;
-	}
 	public String sacarProductos(Iterator<OrderedProduct> productos){
 		String pedido = "";
 		while(productos.hasNext()) {
@@ -149,16 +108,7 @@ public class PaymentsController extends CookiesController {
 		
 	}
 	
-	public boolean hayCongelados(Carrito carrito) {
-		Iterator<OrderedProduct> iterator_carrito = carrito.getProducts().iterator();
-		boolean hayCongelado = false;
-		while(iterator_carrito.hasNext() || hayCongelado==false) {
-			OrderedProduct aux = iterator_carrito.next();
-			if(aux.isCongelado()) 
-				hayCongelado= true;
-		}
-		return hayCongelado;
-	}
+
 
 	
 }

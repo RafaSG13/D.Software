@@ -8,9 +8,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			self.nombre = ko.observable("");
 			self.precio = ko.observable("");
 			self.cantidad = ko.observable("");
-
-			self.congelado = ko.observable(false);
-
 			self.categoria = ko.observable();
 			
 
@@ -72,7 +69,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				precio : this.precio(),
 				cantidad: this.cantidad(),
 				categoria : this.categoria(),
-				congelado : this.congelado()
 			};
 			let data = {
 				data : JSON.stringify(info),

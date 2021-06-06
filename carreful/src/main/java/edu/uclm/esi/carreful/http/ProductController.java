@@ -28,7 +28,7 @@ import edu.uclm.esi.carreful.model.Product;
 
 @RestController
 @RequestMapping("product")
-public class ProductController extends CookiesController {
+public class ProductController extends CookiesController{
 	
 	@Autowired
 	private ProductDao productDao;
@@ -106,45 +106,6 @@ public class ProductController extends CookiesController {
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
-	}
-
-	@GetMapping("/getPrecio/{id}")
-	public String getPrecio(@PathVariable String id) {
-		try {
-			Optional<Product> optProduct = productDao.findById(id);
-			if (optProduct.isPresent())
-				return ""+optProduct.get().getPrecio();
-			throw new CarrefulException(HttpStatus.NOT_FOUND,EL_PRODUCTO_NO_EXISTE);
-		} catch(Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}
-	}
-	
-	/*@GetMapping("/getUnProducto/{id}")
-	public Product getUnProducto(@PathVariable String id) {
-		try {
-			Optional<Product> optProduct = productDao.findById(id);
-			if (optProduct.isPresent()) {
-				JSONObject jso= new JSONObject();
-				jso.put("id", optProduct.get().getId());
-				jso.put("nombre", optProduct.get().getNombre());
-				jso.put("precio", optProduct.get().getPrecio());
-				jso.put("categoria", optProduct.get().getCategoria());
-				return optProduct.get();
-			}
-			throw new Exception("El producto no existe");
-		} catch(Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}
-	}*/
-	@GetMapping("/getCarrito")
-	public Carrito getCarrito(HttpServletRequest request) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
-		if (carrito==null) {
-			carrito = new Carrito();
-			request.getSession().setAttribute(CARRITO, carrito);
-		}
-		return carrito;
 	}
 	
 	@PostMapping("/addAlCarrito/{id}")

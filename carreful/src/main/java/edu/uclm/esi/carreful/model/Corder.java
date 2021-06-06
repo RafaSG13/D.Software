@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import edu.uclm.esi.carreful.auxiliares.*;
 
 @Entity
 public class Corder {
@@ -16,8 +15,7 @@ public class Corder {
 	private double precioTotal;
 	private String state;
 	private String pedido;
-	@Transient
-	private TipoPedido tipo;
+
 	 
 	public Corder() {
 		this.id = UUID.randomUUID().toString();
@@ -52,18 +50,7 @@ public class Corder {
 		this.pedido = pedido;
 	}
 	
-	public TipoPedido getTipo() {
-		return tipo;
-	}
 
-	public void setTipo(String tipo) {
-		if(tipo.equals("A_Domicilio"))
-			this.tipo=new A_Domicilio();
-		if(tipo.equals("Recoger"))
-			this.tipo=new Recoger();
-		if(tipo.equals("Express"))
-			this.tipo=new Express();
-	}
 
 	
 }
