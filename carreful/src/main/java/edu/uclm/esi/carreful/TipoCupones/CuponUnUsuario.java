@@ -9,4 +9,10 @@ import edu.uclm.esi.carreful.dao.UserDao;
 public class CuponUnUsuario extends TipoCupon{
 	private HashMap<String, Float> usuarios;
 
+	public CuponUnUsuario() {
+		usuarios= new HashMap<String, Float>();
+		
+		}
 }
+
+

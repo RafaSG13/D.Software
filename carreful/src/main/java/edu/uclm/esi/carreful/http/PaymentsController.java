@@ -1,29 +1,32 @@
 package edu.uclm.esi.carreful.http;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.stripe.Stripe;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
+
+import edu.uclm.esi.carreful.dao.CuponDao;
 import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
 import edu.uclm.esi.carreful.model.Corder;
+import edu.uclm.esi.carreful.model.Cupon;
 import edu.uclm.esi.carreful.model.OrderedProduct;
 import edu.uclm.esi.carreful.model.User;
 import edu.uclm.esi.carreful.tokens.Email;
@@ -35,6 +38,9 @@ public class PaymentsController extends CookiesController {
 	static {
 		Stripe.apiKey = "sk_test_51IdbtOE3xk4z0l3iN9AVWJ8eQSx7Ifhhk13OAeKS3TQjW2eN66yCmS3xwXV265bvot1p0ldgabUugmSLk3310dP000A4Z1Kszx";
 	}
+	
+	@Autowired
+	CuponDao cDao;
 	
 	@PostMapping("/solicitarPreautorizacion")
 	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
@@ -95,6 +101,28 @@ public class PaymentsController extends CookiesController {
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
+	}
+	
+	
+	@GetMapping("/AplicarDescuento/{cupon}")
+	public double AplicarDescuento(@PathVariable String cupon, HttpServletRequest request) {
+		double descuento=0;
+		Optional<Cupon> optcupon= cDao.findById(cupon);
+		try {
+			if(!optcupon.isPresent()) 
+				throw new CarrefulException(HttpStatus.NOT_FOUND,"No se ha encontrado el cupon");
+				
+			else {
+				if(optcupon.get().getTipoDescuento().equalsIgnoreCase("porcentual"))
+					descuento= PrecioTotal(request) * optcupon.get().getDescuento();
+				else if(optcupon.get().getTipoDescuento().equalsIgnoreCase("fijo"))
+					descuento = optcupon.get().getDescuento();
+			}
+		}catch(CarrefulException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+	
+		return descuento;
 	}
 	
 	

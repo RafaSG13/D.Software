@@ -25,14 +25,13 @@ define(['knockout', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojkno
       var platform = ThemeUtils.getThemeTargetPlatform();
 
       var navData = [
-        { path: '', redirect: 'product' },
-        { path: 'product', detail : { label : 'Producto'} },     
+        { path: '', redirect: 'login' },
         { path: 'login', detail: { label: 'Login', iconClass: 'oj-ux-ico-bar-chart' } },
-        { path: 'payment', detail : { label : 'Pago'} },
-        { path: 'corder', detail : { label : 'Pedido'} },
         { path: 'register', detail: { label: 'Crear cuenta', iconClass: 'oj-ux-ico-fire' } },
         { path: 'setNewPassword', detail: { label: 'Cambiar contraseña', iconClass: 'oj-ux-ico-fire' } },
-        { path: 'menu', detail: { label: 'Menú', iconClass: 'oj-ux-ico-fire' } },
+        { path: 'product', detail : { label : 'Producto'} },     
+        { path: 'payment', detail : { label : 'Pago'} },
+        { path: 'corder', detail : { label : 'Pedido'} },
         { path: 'about', detail: { label: 'About', iconClass: 'oj-ux-ico-information-s' } }
       ];
       // Router setup

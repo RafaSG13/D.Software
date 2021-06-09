@@ -16,8 +16,8 @@ public abstract class Cupon {
 	private Date fechaInicio;
 	private Date fechaFin;
 	private double descuento;
-	private boolean tipoDescuento;
-	@Transient
+	private String tipoDescuento;
+	//@Transient
 	private TipoCupon tipo; 
 	
 	
@@ -33,7 +33,7 @@ public abstract class Cupon {
 	public double getDescuento() {
 		return descuento;
 	}
-	public boolean isTipoDescuento() {
+	public String getTipoDescuento() {
 		return tipoDescuento;
 	}
 	public void setCodigo(String codigo) {
@@ -48,7 +48,7 @@ public abstract class Cupon {
 	public void setDescuento(double descuento) {
 		this.descuento = descuento;
 	}
-	public void setTipoDescuento(boolean tipoDescuento) {
+	public void setTipoDescuento(String tipoDescuento) {
 		this.tipoDescuento = tipoDescuento;
 	}
 	

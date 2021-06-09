@@ -40,5 +40,10 @@ public class Carrito {
 	public Collection<OrderedProduct> getProducts() {
 		return products.values();
 	}
+	
+	public OrderedProduct getOrdered(String id) {
+		return products.get(id);
+		
+	}
 
 }

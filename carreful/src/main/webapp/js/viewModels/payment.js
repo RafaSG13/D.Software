@@ -9,6 +9,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			self.stripe = Stripe('pk_test_51IdbtOE3xk4z0l3iOwpaJ3Rp0n58pBWBVBVxrba7Vslzdk28K2SCTtqYgk16LXkXthMQ5kZQQPaTkMr34BLL6BlJ00AKbD4VQZ');
 			self.carrito = ko.observableArray([]);
 			self.total = ko.observable(0);
+			self.descuento = ko.observable("");
 			self.cupon = ko.observable("");
 			
 			
@@ -34,7 +35,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			accUtils.announce('Login page loaded.');
 			document.title = "Pago";
 			this.getCarrito();
-			this.calcularTotal()		
+			this.calcularTotal()
 		};
 		
 		getCarrito(){
@@ -52,7 +53,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				}
 			};
 			$.ajax(data);
-
 		}
 		
 		solicitarPreautorizacion() {
@@ -128,7 +128,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 					// The payment has been processed!
 					if (result.paymentIntent.status === 'succeeded') {
 						let data = {
-							url : "payments/confirmarPedido/"+ self.envio(),
+							url : "payments/confirmarPedido",
 							type : "get",
 							contentType : 'application/json',
 							success : function(response) {
@@ -148,11 +148,10 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			let self = this;
 			
 			let data = {
-				url : "payments/PrecioTotal/",
+				url : "payments/PrecioTotal",
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {
-					self.message("");
 					self.total(response);
 					
 				},
@@ -163,15 +162,16 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
-		Probando(){
+		AplicarDescuento(){
 			let self = this;
+			
 			let data = {
-				url : "payments/confirmarPedido",
+				url : "payments/AplicarDescuento/"+self.cupon(),
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {
-					self.message(response);
-					
+					self.message("Descuento Aplicado correctamente");
+					self.descuento(response);
 					
 				},
 				error : function(response) {
@@ -180,6 +180,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			};
 			$.ajax(data);
 		}
+
 
 		disconnected() {
 			// Implement if needed
