@@ -6,6 +6,8 @@ import java.util.HashMap;
 public class Carrito {
 	private HashMap<String, OrderedProduct> products;
 	private OrderedProduct orderedProduct;
+	private Cupon cuponDescuento;
+
 	
 	public Carrito() {
 		this.products = new HashMap<>();
@@ -45,5 +47,15 @@ public class Carrito {
 		return products.get(id);
 		
 	}
+
+	public Cupon getCuponDescuento() {
+		return cuponDescuento;
+	}
+
+	public void setCuponDescuento(Cupon cuponDescuento) {
+		this.cuponDescuento = cuponDescuento;
+	}
+
+
 
 }

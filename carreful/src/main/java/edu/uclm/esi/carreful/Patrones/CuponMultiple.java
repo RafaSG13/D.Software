@@ -1,4 +1,4 @@
-package edu.uclm.esi.carreful.TipoCupones;
+package edu.uclm.esi.carreful.Patrones;
 
 import java.util.HashMap;
 

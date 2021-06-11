@@ -1,5 +1,6 @@
 package edu.uclm.esi.carreful.http;
 
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -81,7 +82,7 @@ public class PaymentsController extends CookiesController {
 			
 				
 			Corder pedido = new Corder();
-			pedido.setPrecioTotal(PrecioTotal(request)*100);
+			pedido.setPrecioTotal(precioTotal(request)*100);
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
 			
@@ -104,25 +105,31 @@ public class PaymentsController extends CookiesController {
 	}
 	
 	
-	@GetMapping("/AplicarDescuento/{cupon}")
-	public double AplicarDescuento(@PathVariable String cupon, HttpServletRequest request) {
-		double descuento=0;
-		Optional<Cupon> optcupon= cDao.findById(cupon);
+	@PostMapping("/AplicarDescuento/{cupon}")
+	public void AplicarDescuento(HttpServletRequest request, @PathVariable String cupon) {
 		try {
-			if(!optcupon.isPresent()) 
-				throw new CarrefulException(HttpStatus.NOT_FOUND,"No se ha encontrado el cupon");
-				
-			else {
-				if(optcupon.get().getTipoDescuento().equalsIgnoreCase("porcentual"))
-					descuento= PrecioTotal(request) * optcupon.get().getDescuento();
-				else if(optcupon.get().getTipoDescuento().equalsIgnoreCase("fijo"))
-					descuento = optcupon.get().getDescuento();
+			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+			if(carrito==null) { //Si no hay carrito en la session lo crea y lo inserta.
+				carrito =  new Carrito();
+				request.getSession().setAttribute("carrito",carrito);
 			}
-		}catch(CarrefulException e) {
+			Optional<Cupon> optcupon = cDao.findById(cupon);
+			if(!optcupon.isPresent()) throw new CarrefulException(HttpStatus.NOT_FOUND,"El cupon introducido no existe");
+			
+			else {
+				Cupon cuponDescuento = optcupon.get();
+				if(cuponDescuento.getRango().comprobarValidez(Calendar.getInstance().getTime())) {
+					carrito.setCuponDescuento(cuponDescuento);
+					request.getSession().setAttribute("carrito", carrito);
+				}
+				else throw new CarrefulException(HttpStatus.FORBIDDEN,"El cupon no es valido a dia de hoy");
+
+			}
+			}catch(CarrefulException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 	
-		return descuento;
+		
 	}
 	
 	

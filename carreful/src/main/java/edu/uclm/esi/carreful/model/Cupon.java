@@ -7,10 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import edu.uclm.esi.carreful.TipoCupones.TipoCupon;
+import org.springframework.http.HttpStatus;
+
+
+
+import edu.uclm.esi.carreful.Patrones.RangoDeFechas;
+import edu.uclm.esi.carreful.Patrones.TipoCupon;
 
 @Entity
-public abstract class Cupon {
+public class Cupon {
 	@Id @Column(length = 36)
 	private String codigo;
 	private Date fechaInicio;
@@ -18,7 +23,10 @@ public abstract class Cupon {
 	private double descuento;
 	private String tipoDescuento;
 	//@Transient
-	private TipoCupon tipo; 
+	private String tipo;
+	
+	@Transient
+	private RangoDeFechas rango;
 	
 	
 	public String getCodigo() {
@@ -53,4 +61,8 @@ public abstract class Cupon {
 	}
 	
 	
+	public RangoDeFechas getRango() {
+		this.rango = new RangoDeFechas(this.fechaInicio , this.fechaFin);
+		return rango;
+	}
 }

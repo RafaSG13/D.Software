@@ -9,7 +9,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			self.stripe = Stripe('pk_test_51IdbtOE3xk4z0l3iOwpaJ3Rp0n58pBWBVBVxrba7Vslzdk28K2SCTtqYgk16LXkXthMQ5kZQQPaTkMr34BLL6BlJ00AKbD4VQZ');
 			self.carrito = ko.observableArray([]);
 			self.total = ko.observable(0);
-			self.descuento = ko.observable("");
 			self.cupon = ko.observable("");
 			
 			
@@ -146,7 +145,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		
 		calcularTotal(){
 			let self = this;
-			
+			let aux;
 			let data = {
 				url : "payments/PrecioTotal",
 				type : "get",
@@ -167,11 +166,11 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			
 			let data = {
 				url : "payments/AplicarDescuento/"+self.cupon(),
-				type : "get",
+				type : "post",
 				contentType : 'application/json',
 				success : function(response) {
 					self.message("Descuento Aplicado correctamente");
-					self.descuento(response);
+					self.calcularTotal();
 					
 				},
 				error : function(response) {

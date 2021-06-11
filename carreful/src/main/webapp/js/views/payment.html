@@ -9,7 +9,12 @@
     <div role="main" class="oj-hybrid-applayout-content">
       <div class="oj-hybrid-padding">
         <h1>Pago</h1>
+        
         <input type="text" data-bind="value : cupon" placeholder="Codigo del Cupon"><button data-bind="click : function() {AplicarDescuento()}">Introducir Cupon de Descuento</button>
+            <div data-bind="html : message" style="color : blue"></div>
+            <div data-bind="html : error" style="color : red"></div>
+        
+        
         <div>
        
 		    <form id="payment-form">

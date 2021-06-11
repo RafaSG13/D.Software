@@ -1,4 +1,4 @@
-package edu.uclm.esi.carreful.TipoCupones;
+package edu.uclm.esi.carreful.Patrones;
 
 public class CuponUnUso extends TipoCupon{
 	private boolean usado;
