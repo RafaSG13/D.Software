@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 
@@ -47,21 +48,22 @@ public class PaymentsController extends CookiesController {
 	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
-			if(carrito==null) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay productos para pagar aun");
-			
-	
+			if(carrito==null) {
+				carrito = new Carrito();
+				request.getSession().setAttribute("carrito",carrito);
+			}
+			if(carrito.getProducts().isEmpty()) throw new CarrefulException(HttpStatus.FORBIDDEN,"No hay productos en el Carrito, por favor, "
+					+ "incluya productos en el carrito para poder pagar");
 			
 			Corder pedido = new Corder();
 			//pedido.setPrecioTotal(PrecioTotal(request)*100);
-			pedido.setState("Preparandose");
-			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
+			//pedido.setState("Preparandose");
+			//pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
 
-
-			
 			
 			PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
 					.setCurrency("eur")
-					.setAmount((long) 0)
+					.setAmount((long) precioTotal(request)*100)
 					.build();
 			// Create a PaymentIntent with the order amount and currency
 			PaymentIntent intent = PaymentIntent.create(createParams);
@@ -70,8 +72,10 @@ public class PaymentsController extends CookiesController {
 			
 			
 			return jso.getString("client_secret");
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}catch (StripeException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Lo sentimos, pero el  pedido minimo a cobrar debe superar los 0,50 euros.");
+		} catch (CarrefulException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
 		}
 	}
 	
@@ -97,7 +101,7 @@ public class PaymentsController extends CookiesController {
 				
 			
 			}
-			return "Compra realizada con exito";
+			return "Compra realizada con exito\nPedido con numero: "+pedido.getId();
 			
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

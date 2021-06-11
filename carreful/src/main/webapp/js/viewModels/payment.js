@@ -102,7 +102,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		    card.on("change", function (event) {
 		      // Disable the Pay button if there are no card details in the Element
 		      document.querySelector("button").disabled = event.empty;
-		      document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
+		      //document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
 		    });
 		    
 		    var form = document.getElementById("payment-form");
@@ -125,7 +125,9 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 					self.error(result.error.message);
 				} else {
 					// The payment has been processed!
+					document.getElementById("submit").disabled = true;
 					if (result.paymentIntent.status === 'succeeded') {
+					
 						let data = {
 							url : "payments/confirmarPedido",
 							type : "get",
