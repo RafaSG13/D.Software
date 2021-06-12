@@ -34,7 +34,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			accUtils.announce('Login page loaded.');
 			document.title = "Pago";
 			this.getCarrito();
-			this.calcularTotal()		
+			this.calcularTotal()
 		};
 		
 		getCarrito(){
@@ -46,28 +46,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				success : function(response) {
 					self.message("Obtencion del carrito realizada");
 					self.carrito(response.products);
-				},
-				error : function(response) {
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-
-		}
-		
-		crearPedido() {
-			let self = this;
-			let info = {
-				total : this.total()
-			};
-
-			let data = {
-				data : JSON.stringify(info),
-				url : "payments/crearPedido",
-				type : "post",
-				contentType : 'application/json',
-				success : function(response) {
-					app.router.go( { path : "corder"} );
 				},
 				error : function(response) {
 					self.error(response.responseJSON.errorMessage);
@@ -124,7 +102,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		    card.on("change", function (event) {
 		      // Disable the Pay button if there are no card details in the Element
 		      document.querySelector("button").disabled = event.empty;
-		      document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
+		      //document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
 		    });
 		    
 		    var form = document.getElementById("payment-form");
@@ -147,9 +125,11 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 					self.error(result.error.message);
 				} else {
 					// The payment has been processed!
+					document.getElementById("submit").disabled = true;
 					if (result.paymentIntent.status === 'succeeded') {
+					
 						let data = {
-							url : "payments/confirmarPedido/"+ self.envio(),
+							url : "payments/confirmarPedido",
 							type : "get",
 							contentType : 'application/json',
 							success : function(response) {
@@ -167,13 +147,12 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		
 		calcularTotal(){
 			let self = this;
-			
+			let aux;
 			let data = {
-				url : "payments/PrecioTotal/",
+				url : "payments/PrecioTotal",
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {
-					self.message("");
 					self.total(response);
 					
 				},
@@ -184,16 +163,16 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
-		Probando(){
+		AplicarDescuento(){
 			let self = this;
-			let prueba = self.envio();
+			
 			let data = {
-				url : "payments/confirmarPedido",
-				type : "get",
+				url : "payments/AplicarDescuento/"+self.cupon(),
+				type : "post",
 				contentType : 'application/json',
 				success : function(response) {
-					self.message(response);
-					
+					self.message("Descuento Aplicado correctamente");
+					self.calcularTotal();
 					
 				},
 				error : function(response) {
@@ -202,6 +181,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			};
 			$.ajax(data);
 		}
+
 
 		disconnected() {
 			// Implement if needed

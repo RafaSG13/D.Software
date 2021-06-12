@@ -9,15 +9,20 @@
     <div role="main" class="oj-hybrid-applayout-content">
       <div class="oj-hybrid-padding">
         <h1>Pago</h1>
+        
+        <input type="text" data-bind="value : cupon" placeholder="Codigo del Cupon"><button data-bind="click : function() {AplicarDescuento()}">Introducir Cupon de Descuento</button>
+            <div data-bind="html : message" style="color : blue"></div>
+            <div data-bind="html : error" style="color : red"></div>
+        
+        
         <div>
+       
 		    <form id="payment-form">
 		      <div id="card-element"><!--Stripe.js injects the Card Element--></div>
 		      <button id="submit">
 		        <div class="spinner hidden" id="spinner"></div>
-		        <span id="button-text" data-bind="click : solicitarPreautorizacion()">Pay now</span>
-				<span id="button-text" data-bind="click : solicitarPreautorizacion()">Pay now</span>
-		      </button>
-		     <input type="text" data-bind="value : cupon" placeholder="Codigo del Cupon">	 
+		        <span id="button-text hidden" data-bind="click : function() {solicitarPreautorizacion()}">Pay now</span>
+		      </button> 
 		    </form>
 	
         </div>
@@ -40,7 +45,7 @@
         				</tr>
         		</table>
      		</div>
-			<button data-bind="click : crearPedido ">Crear Pedido</button>
     </div>
+  </div>
   </div>
 </div>
