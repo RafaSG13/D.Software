@@ -78,15 +78,7 @@ public class ProductController extends CookiesController{
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 		}
 	}
-	
-	@GetMapping("/getTodos")
-	public List<Product> get() {
-		try {
-			return productDao.findAll();
-		} catch(Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}
-	}
+
 	
 	@GetMapping("/getCategorias")
 	public List<Categoria> getCategorias() {
@@ -116,12 +108,20 @@ public class ProductController extends CookiesController{
 			request.getSession().setAttribute(CARRITO, carrito);
 		}
 		
-		Product producto = productDao.findById(id).get();
+		Optional<Product> producto = productDao.findById(id);
 		
 		try {
-			if(producto.getCantidad()==0) throw new Exception("No hay stock disponible del producto");
-			carrito.add(producto, 1);
-			
+			if(producto.isPresent()) {
+				
+				if(producto.get().getCantidad()==0) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay stock disponible del producto");
+				if(carrito.getOrdered(producto.get().getId())!=null) {
+					if(carrito.getAmount(producto.get()) +1 > producto.get().getCantidad()) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay suficiente stock en estos momentos del producto "+ producto.get().getNombre());
+				}
+				
+				carrito.add(producto.get(), 1);
+			}
+
+		
 		}catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
@@ -189,15 +189,14 @@ public class ProductController extends CookiesController{
 			request.getSession().setAttribute(CARRITO, carrito);
 		}
 		Product producto = productDao.findById(id).get();
+		
 
 		try {
 			carrito.subtract(producto, 1);
-			producto.setCantidad(producto.getCantidad()+1);
 			if(carrito.getAmount(producto)==0) {
 				carrito.remove(producto);
 			}
-			productDao.delete(producto);
-			productDao.save(producto);
+
 		}catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}

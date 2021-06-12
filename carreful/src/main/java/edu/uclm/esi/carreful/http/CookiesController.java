@@ -83,20 +83,27 @@ public abstract class CookiesController {
 	}
 	
 	@GetMapping("/PrecioTotal")
-	public double PrecioTotal(HttpServletRequest request) {
+	public double precioTotal(HttpServletRequest request) {
 		double total=0;
-		try {
-			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
-			if (carrito==null)
-				throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay carrito en estos momentos");
-			Iterator<OrderedProduct> iterador_productos=carrito.getProducts().iterator();
-			while(iterador_productos.hasNext()) {
-				OrderedProduct aux = iterador_productos.next();
-				total+=aux.getAmount()*aux.getPrecio();
-			}
-		}catch(CarrefulException e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		if (carrito==null) {
+			carrito = new Carrito();
+			request.getSession().setAttribute("carrito", carrito);
 		}
+			
+		Iterator<OrderedProduct> iterador_productos=carrito.getProducts().iterator();
+		while(iterador_productos.hasNext()) {
+			OrderedProduct aux = iterador_productos.next();
+			total+=aux.getAmount()*aux.getPrecio();
+		}
+		if(carrito.getCuponDescuento()!=null) {
+			if(carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("porcentual"))
+				total = total - (total*carrito.getCuponDescuento().getDescuento());
+			else if(carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("fijo"))
+				total = total - carrito.getCuponDescuento().getDescuento();
+		}
+		if(total<0) // si el descuento hace que el precio sea negativo, entonces lo cambiamos a que sea como minimo GRATIS
+			total = 0;
 		return total;
 	}
 		

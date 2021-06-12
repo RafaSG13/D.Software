@@ -51,7 +51,7 @@ public class PaymentsController extends CookiesController {
 			if(carrito==null) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay productos para pagar aun");
 			
 			Corder pedido = new Corder();
-			pedido.setPrecioTotal(PrecioTotal(request)*100);
+			pedido.setPrecioTotal(precioTotal(request)*100);
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
 			
@@ -103,7 +103,7 @@ public class PaymentsController extends CookiesController {
 			
 				
 			Corder pedido = new Corder();
-			pedido.setPrecioTotal(PrecioTotal(request)*100);
+			pedido.setPrecioTotal(precioTotal(request)*100);
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
 			

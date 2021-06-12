@@ -37,7 +37,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				type : "post",
 				contentType : 'application/json',
 				success : function(response) {
-					app.router.go( { path : "menu"} );
+					app.router.go( { path : "product"} );
 				},
 				error : function(response) {
 					self.error(response.responseJSON.errorMessage);
