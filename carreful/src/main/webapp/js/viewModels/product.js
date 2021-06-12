@@ -112,9 +112,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {
-					
 					self.producto_categoria(response);
-
 				},
 				error : function(response) {
 					self.error(response.responseJSON.errorMessage);

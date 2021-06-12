@@ -36,15 +36,26 @@
     <div role="main" class="oj-hybrid-applayout-content">
       <div class="oj-hybrid-padding">
         <h1>Pedido</h1>
-        
-
-         
-     <div style="float:left;">
-		<h2>Productos</h2>
-
-
-       </div>
-      </div>
+		<div>
+         	<input type="text" data-bind="value : id" >
+			<button data-bind="click : getProductos_Pedido">Buscar</button>
+		</div>
+		
+		 <table>
+        	<tr>
+        		<th>Pedido</th>
+        		<th>Estado</th>
+        		<th>Precio</th>
+        	</tr>
+			<!-- ko foreach : pedido_productos -->
+        		<tr>		 
+	    			<td data-bind="html : nombre"></td>
+	    			<td data-bind="html : cantidad"></td>
+	    			<td data-bind="html : precio"></td>   
+        		</tr>
+        	<!-- /ko -->
+          </table>
+         </div>
     </div>
   </div>
 </div>

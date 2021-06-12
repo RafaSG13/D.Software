@@ -4,13 +4,11 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 	class CorderViewModel {
 		constructor() {
 			var self = this;
-			
-			self.nombre = ko.observable("");
-			self.precio = ko.observable("");
-		
-			self.cantidad = ko.observable("");
-
-	
+			self.pedido_productos = ko.observableArray([]);
+			self.id = ko.observable("");
+			self.pedido = ko.observable("");
+			self.state = ko.observable("");
+			self.precio_total = ko.observable();
 			self.message = ko.observable(null);
 			self.error = ko.observable(null);
 			
@@ -97,6 +95,37 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
+		getPedido(){
+			let self = this;
+			let data = {
+				url : "corder/getPedido/" + self.id(),
+				type : "get",
+				contentType : 'application/json',
+				success : function(response) {
+					self.pedido_productos(response);
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+		}
+		
+		getProductos_Pedido(){
+			let self = this;
+			let data = {
+				url : "corder/getListaProductos/" + self.id(),
+				type : "get",
+				contentType : 'application/json',
+				success : function(response) {
+					self.pedido_productos(response);
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+		}
 		
 		register() {
 			app.router.go( { path : "register" } );

@@ -55,6 +55,27 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 
 		}
 		
+		crearPedido() {
+			let self = this;
+			let info = {
+				total : this.total()
+			};
+
+			let data = {
+				data : JSON.stringify(info),
+				url : "payments/crearPedido",
+				type : "post",
+				contentType : 'application/json',
+				success : function(response) {
+					app.router.go( { path : "corder"} );
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+		}
+		
 		solicitarPreautorizacion() {
 			let self = this;
 			let info = {
