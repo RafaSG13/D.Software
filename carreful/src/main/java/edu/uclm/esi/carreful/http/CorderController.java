@@ -30,33 +30,7 @@ public class CorderController extends CookiesController {
 	@Autowired
 	private CorderDao orderDao;
 	
-	@GetMapping("get/{orderId}")
-	public String get(@PathVariable String orderId) {
-		Optional<Corder> optOrder = orderDao.findById(orderId);
-		if (optOrder.isPresent())
-			return optOrder.get().getState();
-		return "No se encuentra el pedido";
-	}
-	
 	@GetMapping("/getPedido/{id}")
-	public Corder getPedido(HttpServletRequest request,@PathVariable String id) {
-		Corder order;
-		try {
-			Optional<Corder> optpedido=orderDao.findById(id);
-			if(!optpedido.isPresent()) {
-				throw new CarrefulException(HttpStatus.NOT_FOUND, "El pedido no ha sido encontrado");
-			}
-			else {
-				order = optpedido.get();
-				
-			}
-			return order;
-		} catch(Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}
-	}
-	
-	@GetMapping("/getListaProductos/{id}")
 	public List<Product> getListaProductos(HttpServletRequest request,@PathVariable String id){
 		try {
 			Optional<Corder> optpedido=orderDao.findById(id);
@@ -66,13 +40,16 @@ public class CorderController extends CookiesController {
 			
 			List<Product> p = new ArrayList<Product>();
 			StringTokenizer st = new StringTokenizer(optpedido.get().getPedido(),"\n");
+
 			while(st.hasMoreElements()) {
 				Product producto = new Product(); 
-				String token[] = st.nextToken().split(",");
-				producto.setNombre(token[0]);
-				System.out.println(token[1]);
-				producto.setCantidad(Integer.parseInt(st.nextToken(token[1])));
-				producto.setPrecio(Double.parseDouble(st.nextToken(token[2])));
+				String linea[] = st.nextToken().split(",");
+				System.out.println(""+linea[0]+" "+linea[1]+" "+linea[2]);
+				producto.setNombre(linea[0]);
+				producto.setCantidad((int) Double.parseDouble(linea[1]));
+				producto.setPrecio(Double.parseDouble(linea[2]));
+				
+				System.out.println(""+producto.getNombre()+" "+producto.getCantidad()+" "+producto.getPrecio());
 				p.add(producto);
 			}
 				return p;

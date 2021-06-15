@@ -1,5 +1,6 @@
 package edu.uclm.esi.carreful.http;
 
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.Optional;
@@ -24,6 +25,7 @@ import edu.uclm.esi.carreful.dao.ProductDao;
 import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
 import edu.uclm.esi.carreful.model.Categoria;
+import edu.uclm.esi.carreful.model.OrderedProduct;
 import edu.uclm.esi.carreful.model.Product;
 
 @RestController
@@ -201,5 +203,25 @@ public class ProductController extends CookiesController{
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
 		return carrito;
+	}
+	
+	@PostMapping("/decrementarStock")
+	public void decrementarStock(HttpServletRequest request) {
+		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
+		if (carrito==null) {
+			carrito = new Carrito();
+			request.getSession().setAttribute(CARRITO, carrito);
+		}
+		
+		Iterator<OrderedProduct> itrproductos = carrito.getProducts().iterator();
+	
+		while(itrproductos.hasNext()) {
+			Product product = itrproductos.next().getProduct();
+			product.setCantidad(product.getCantidad() - (int) carrito.getAmount(product)); //Actualizamos la cantidad de las BD.
+			productDao.deleteById(product.getId());
+			productDao.save(product);	//se actualiza
+			carrito.remove(product);	//se elimina del carrito dicho producto
+		}
+		request.getSession().setAttribute("carrito", carrito); // no vale asi, debo devolver el carrito
 	}
 }

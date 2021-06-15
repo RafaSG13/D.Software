@@ -1,10 +1,9 @@
 package edu.uclm.esi.carreful.http;
 
-
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,19 +15,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 
 import edu.uclm.esi.carreful.dao.CorderDao;
-import edu.uclm.esi.carreful.dao.ProductDao;
+import edu.uclm.esi.carreful.dao.CuponDao;
 import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
 import edu.uclm.esi.carreful.model.Corder;
+import edu.uclm.esi.carreful.model.Cupon;
 import edu.uclm.esi.carreful.model.OrderedProduct;
 import edu.uclm.esi.carreful.model.User;
 import edu.uclm.esi.carreful.tokens.Email;
@@ -42,47 +43,25 @@ public class PaymentsController extends CookiesController {
 	}
 	
 	@Autowired
-	private CorderDao corderDao;
+	CuponDao cuponDao;
 	
-	@PostMapping("/crearPedido")
-	public void crearPedido(HttpServletRequest request, @RequestBody Map<String, Object> info) {
-		try {
-			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
-			if(carrito==null) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay productos para pagar aun");
-			
-			Corder pedido = new Corder();
-			pedido.setPrecioTotal(precioTotal(request)*100);
-			pedido.setState("Preparandose");
-			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
-			
-			corderDao.save(pedido);
-			
-						
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-		}
-	}
-	
+	@Autowired
+	CorderDao corderDao;
 	
 	@PostMapping("/solicitarPreautorizacion")
 	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
-			if(carrito==null) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay productos para pagar aun");
-			
-	
-			
-			Corder pedido = new Corder();
-			//pedido.setPrecioTotal(PrecioTotal(request)*100);
-			pedido.setState("Preparandose");
-			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
-
-
-			
+			if(carrito==null) {
+				carrito = new Carrito();
+				request.getSession().setAttribute("carrito",carrito);
+			}
+			if(carrito.getProducts().isEmpty()) throw new CarrefulException(HttpStatus.FORBIDDEN,"No hay productos en el Carrito, por favor, "
+					+ "incluya productos en el carrito para poder pagar");
 			
 			PaymentIntentCreateParams createParams = new PaymentIntentCreateParams.Builder()
 					.setCurrency("eur")
-					.setAmount((long) 0)
+					.setAmount((long) precioTotal(request)*100)
 					.build();
 			// Create a PaymentIntent with the order amount and currency
 			PaymentIntent intent = PaymentIntent.create(createParams);
@@ -91,8 +70,10 @@ public class PaymentsController extends CookiesController {
 			
 			
 			return jso.getString("client_secret");
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+		}catch (StripeException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Lo sentimos, pero el  pedido minimo a cobrar debe superar los 0,50 euros.");
+		} catch (CarrefulException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
 		}
 	}
 	
@@ -103,9 +84,11 @@ public class PaymentsController extends CookiesController {
 			
 				
 			Corder pedido = new Corder();
-			pedido.setPrecioTotal(precioTotal(request)*100);
+			pedido.setPrecioTotal(precioTotal(request));
 			pedido.setState("Preparandose");
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
+			
+			corderDao.save(pedido);
 			
 			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
 			if (user!=null) {
@@ -118,11 +101,39 @@ public class PaymentsController extends CookiesController {
 				
 			
 			}
-			return "Compra realizada con exito";
+			return "Compra realizada con exito\nPedido con numero: "+pedido.getId();
 			
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
+	}
+	
+	
+	@PostMapping("/AplicarDescuento/{cupon}")
+	public void AplicarDescuento(HttpServletRequest request, @PathVariable String cupon) {
+		try {
+			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+			if(carrito==null) { //Si no hay carrito en la session lo crea y lo inserta.
+				carrito =  new Carrito();
+				request.getSession().setAttribute("carrito",carrito);
+			}
+			Optional<Cupon> optcupon = cuponDao.findById(cupon);
+			if(!optcupon.isPresent()) throw new CarrefulException(HttpStatus.NOT_FOUND,"El cupon introducido no existe");
+			
+			else {
+				Cupon cuponDescuento = optcupon.get();
+				if(cuponDescuento.getRango().comprobarValidez(Calendar.getInstance().getTime())) {
+					carrito.setCuponDescuento(cuponDescuento);
+					request.getSession().setAttribute("carrito", carrito);
+				}
+				else throw new CarrefulException(HttpStatus.FORBIDDEN,"El cupon no es valido a dia de hoy");
+
+			}
+			}catch(CarrefulException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+		}
+	
+		
 	}
 	
 	

@@ -127,22 +127,44 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 					// The payment has been processed!
 					document.getElementById("submit").disabled = true;
 					if (result.paymentIntent.status === 'succeeded') {
-					
-						let data = {
-							url : "payments/confirmarPedido",
-							type : "get",
-							contentType : 'application/json',
-							success : function(response) {
-								alert(response);
-							},
-							error : function(response) {
-								self.error(response.responseJSON.errorMessage);
-							}
-						};
-						$.ajax(data);
+						self.confirmarPedido();
 					}
 				}
 			});			
+		}
+		
+		confirmarPedido() {
+			let self = this;
+			let data = {
+				url : "payments/confirmarPedido",
+				type : "get",
+				contentType : 'application/json',
+				success : function(response) {
+					alert(response);
+					self.decrementarStock();
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
+		}
+		
+		decrementarStock(){
+			let self = this;
+			let data = {
+				url : "product/decrementarStock",
+				type : "post",
+				contentType : 'application/json',
+				success : function(response) {
+					self.message("Productos decrementados");
+					self.getCarrito();
+				},
+				error : function(response) {
+					self.error(response.responseJSON.errorMessage);
+				}
+			};
+			$.ajax(data);
 		}
 		
 		calcularTotal(){

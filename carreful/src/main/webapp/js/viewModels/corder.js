@@ -26,56 +26,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				})
 			})
 		}
-
-		add() {
-			var self = this;
-			let info = {
-				nombre : this.nombre(),
-				precio : this.precio(),
-				cantidad: this.cantidad(),
-
-			};
-			let data = {
-				data : JSON.stringify(info),
-				url : "corder/add",
-				type : "post",
-				contentType : 'application/json',
-				success : function(response) {
-					self.message("Pedido guardado");
-					
-				},
-				error : function(response) {
-					/*self.error(response.responseJSON.errorMessage);*/
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-		}
-		
-		
-		update() {
-			var self = this;
-			let info = {
-				nombre : this.nombre(),
-				precio : this.precio(),
-				cantidad: this.cantidad(),
-			};
-			let data = {
-				data : JSON.stringify(info),
-				url : "corder/update",
-				type : "post",
-				contentType : 'application/json',
-				success : function(response) {
-					self.message("Producto guardado");
-				},
-				error : function(response) {
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-		}
-		
-		
 		eliminarPedido(id) {
 			let self = this;
 			let data = {
@@ -95,7 +45,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
-		getPedido(){
+	getPedido(){
 			let self = this;
 			let data = {
 				url : "corder/getPedido/" + self.id(),
@@ -110,27 +60,8 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			};
 			$.ajax(data);
 		}
+	
 		
-		getProductos_Pedido(){
-			let self = this;
-			let data = {
-				url : "corder/getListaProductos/" + self.id(),
-				type : "get",
-				contentType : 'application/json',
-				success : function(response) {
-					self.pedido_productos(response);
-				},
-				error : function(response) {
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-		}
-		
-		register() {
-			app.router.go( { path : "register" } );
-		}
-
 		connected() {
 			accUtils.announce('Login page loaded.');
 			document.title = "Login";
