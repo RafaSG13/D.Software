@@ -157,8 +157,9 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				type : "post",
 				contentType : 'application/json',
 				success : function(response) {
-					self.message("Productos decrementados");
 					self.getCarrito();
+					self.message("Productos decrementados");
+					self.calcularTotal();
 				},
 				error : function(response) {
 					self.error(response.responseJSON.errorMessage);

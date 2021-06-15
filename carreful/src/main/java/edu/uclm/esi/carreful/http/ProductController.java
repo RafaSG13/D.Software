@@ -1,5 +1,6 @@
 package edu.uclm.esi.carreful.http;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -213,15 +214,17 @@ public class ProductController extends CookiesController{
 			request.getSession().setAttribute(CARRITO, carrito);
 		}
 		
-		Iterator<OrderedProduct> itrproductos = carrito.getProducts().iterator();
-	
-		while(itrproductos.hasNext()) {
-			Product product = itrproductos.next().getProduct();
+		ArrayList<OrderedProduct> lista = new ArrayList<OrderedProduct>(carrito.getProducts());
+		
+		for(int i=0; i<lista.size(); i++) {
+			Product product = lista.get(i).getProduct();
 			product.setCantidad(product.getCantidad() - (int) carrito.getAmount(product)); //Actualizamos la cantidad de las BD.
 			productDao.deleteById(product.getId());
-			productDao.save(product);	//se actualiza
-			carrito.remove(product);	//se elimina del carrito dicho producto
+			productDao.save(product);
 		}
-		request.getSession().setAttribute("carrito", carrito); // no vale asi, debo devolver el carrito
+		
+		carrito.getProducts().removeAll(carrito.getProducts());
+		request.getSession().setAttribute("carrito", carrito); // el carrito se pone vacio de nuevo al decrementar el stock
+		
 	}
 }
