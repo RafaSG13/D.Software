@@ -43,7 +43,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				precio : this.precio(),
 				cantidad: this.cantidad(),
 				categoria : this.categoria(),
-				congelado : this.congelado()
 			};
 			let data = {
 				data : JSON.stringify(info),

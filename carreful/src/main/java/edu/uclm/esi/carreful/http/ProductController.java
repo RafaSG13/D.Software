@@ -112,19 +112,19 @@ public class ProductController extends CookiesController{
 		}
 		
 		Optional<Product> producto = productDao.findById(id);
-		
 		try {
 			if(producto.isPresent()) {
+
+				Product p = producto.get();
+						
+				if(p.getCantidad()==0) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay stock disponible del producto");
 				
-				if(producto.get().getCantidad()==0) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay stock disponible del producto");
-				if(carrito.getOrdered(producto.get().getId())!=null) {
-					if(carrito.getAmount(producto.get()) +1 > producto.get().getCantidad()) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay suficiente stock en estos momentos del producto "+ producto.get().getNombre());
-				}
+				if(carrito.getOrdered(p.getNombre())!=null && carrito.getAmount(p) >= p.getCantidad()) 
+					throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay suficiente stock en estos momentos del producto "+ producto.get().getNombre());
 				
-				carrito.add(producto.get(), 1);
+				carrito.add(p, 1);
 			}
 
-		
 		}catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
