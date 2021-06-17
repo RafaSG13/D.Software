@@ -156,7 +156,7 @@ public class ProductController extends CookiesController{
 		return carrito;
 	}
 	
-	@DeleteMapping("/borrarProducto/{id}")
+	/*@DeleteMapping("/borrarProducto/{id}")
 	public void borrarProducto(@PathVariable String id) {
 		try {
 			Optional<Product> optProduct = productDao.findById(id);
@@ -167,16 +167,16 @@ public class ProductController extends CookiesController{
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
-	}
+	}*/
 	
-	@DeleteMapping("/borrarProductoDeLaBD/{nombre}")
-	public void borrarProductoDeLaBD(HttpServletRequest request, @PathVariable String nombre) {
+	@DeleteMapping("/borrarProducto/{id}")
+	public void borrarProductoDeLaBD(HttpServletRequest request, @PathVariable String id) {
 		try {
 			if (request.getSession().getAttribute("userEmail")==null)
-				throw new CarrefulException(HttpStatus.FORBIDDEN,"No tienes permiso para borrar el producto");
-			Optional<Product> optProduct = productDao.findById(nombre);
+				throw new CarrefulException(HttpStatus.FORBIDDEN,"No tienes permiso para borrar el producto. Inicia sesion como empleado para poder tener permisos de insercion,borrado y modificacion.");
+			Optional<Product> optProduct = productDao.findById(id);
 			if (optProduct.isPresent())
-				productDao.deleteById(nombre);
+				productDao.deleteById(id);
 			else
 				throw new CarrefulException(HttpStatus.NOT_FOUND,EL_PRODUCTO_NO_EXISTE);
 		} catch(Exception e) {
