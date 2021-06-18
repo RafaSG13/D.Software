@@ -87,7 +87,6 @@ public class PaymentsController extends CookiesController {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
 			
-				
 			Corder pedido = new Corder();
 			pedido.setPrecioTotal(precioTotal(request));
 			pedido.setState("Preparandose");
@@ -103,8 +102,6 @@ public class PaymentsController extends CookiesController {
 				String texto = "Su pedido es el siguiente: " + 
 						"<a href='http://localhost/user/usarToken/" + token.getId() + "'>aquí</a>";
 				smtp.send(user.getEmail(), "Carreful confirmacion de Pedido.", texto);
-				
-			
 			}
 			return "Compra realizada con exito\nPedido con numero: "+pedido.getId();
 			
@@ -112,7 +109,6 @@ public class PaymentsController extends CookiesController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
-	
 	
 	@PostMapping("/AplicarDescuento/{cupon}")
 	public void AplicarDescuento(HttpServletRequest request, @PathVariable String cupon) {
@@ -141,7 +137,6 @@ public class PaymentsController extends CookiesController {
 		
 	}
 	
-	
 	@GetMapping("/PrecioTotal")
 	public double precioTotal(HttpServletRequest request) {
 		double total=0;
@@ -166,8 +161,7 @@ public class PaymentsController extends CookiesController {
 			total = 0;
 		return total;
 	}
-	
-	
+		
 	public String sacarProductos(Iterator<OrderedProduct> productos){
 		String pedido = "";
 		while(productos.hasNext()) {
@@ -177,8 +171,5 @@ public class PaymentsController extends CookiesController {
 		return pedido;
 		
 	}
-	
 
-
-	
 }

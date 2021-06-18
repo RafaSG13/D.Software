@@ -1,31 +1,22 @@
 package edu.uclm.esi.carreful.Patrones;
 
-import java.util.HashMap;
+import java.util.Date;
+import edu.uclm.esi.carreful.model.Cupon;
 
-public class CuponMultiple extends TipoCupon{
-	private int limiteUsos;
-	private HashMap<String, Float> usuarios;
+public class CuponMultiple extends Cupon{
+	String usuario;
+	int vecesUsado;
 	
-	public CuponMultiple(int usos) {
-		setLimiteUsos(usos);
+	public CuponMultiple(String codigo, Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, String usuario) {
+		super(fechaInicio,fechaFin,descuento,tipoDescuento);
+		this.usuario=usuario;
+		
 	}
 
-	public int getLimiteUsos() {
-		return limiteUsos;
+	@Override
+	public void usarCupon() {
+		System.out.println("Estoy sinedo usado, Cupon Multiple");
+		
 	}
-
-	public void setLimiteUsos(int limiteUsos) {
-		this.limiteUsos = limiteUsos;
-	}
-
-	public HashMap<String, Float> getUsuarios() {
-		return usuarios;
-	}
-
-	public void setUsuarios(HashMap<String, Float> usuarios) {
-		this.usuarios = usuarios;
-	}
-
-
 	
 }

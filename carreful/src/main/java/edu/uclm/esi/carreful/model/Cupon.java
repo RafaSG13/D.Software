@@ -1,33 +1,45 @@
 package edu.uclm.esi.carreful.model;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
-
-import org.springframework.http.HttpStatus;
-
-
-
 import edu.uclm.esi.carreful.Patrones.RangoDeFechas;
-import edu.uclm.esi.carreful.Patrones.TipoCupon;
+
 
 @Entity
-public class Cupon {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+
+
+public abstract class Cupon {
 	@Id @Column(length = 36)
-	private String codigo;
-	private Date fechaInicio;
-	private Date fechaFin;
-	private double descuento;
-	private String tipoDescuento;
-	//@Transient
-	private String tipo;
+	protected String codigo;
+	protected Date fechaInicio;
+	protected Date fechaFin;
+	protected double descuento;
+	protected String tipoDescuento;
 	
 	@Transient
-	private RangoDeFechas rango;
+	protected RangoDeFechas rango;
 	
+
+	
+	protected Cupon(Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento) {
+		super();
+		this.codigo =  UUID.randomUUID().toString();;
+		this.descuento = descuento;
+		this.tipoDescuento = tipoDescuento;
+		this.rango = new RangoDeFechas(fechaInicio , fechaFin);
+		this.fechaInicio = rango.getFechaInicio();
+		this.fechaFin = rango.getFechaFin();
+	}
+	
+	public abstract void usarCupon();
 	
 	public String getCodigo() {
 		return codigo;
@@ -62,7 +74,6 @@ public class Cupon {
 	
 	
 	public RangoDeFechas getRango() {
-		this.rango = new RangoDeFechas(this.fechaInicio , this.fechaFin);
 		return rango;
 	}
 }
