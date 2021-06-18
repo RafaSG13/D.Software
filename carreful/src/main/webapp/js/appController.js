@@ -11,7 +11,7 @@ define(['knockout', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-adapter', 'ojs/ojkno
       // Handle announcements sent when pages change, for Accessibility.
       self.manner = ko.observable('polite');
       self.message = ko.observable();
-
+	  self.ko = ko;
       document.getElementById('globalBody').addEventListener('announce', announcementHandler, false);
 
       function announcementHandler(event) {

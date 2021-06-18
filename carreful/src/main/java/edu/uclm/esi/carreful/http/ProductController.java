@@ -81,7 +81,6 @@ public class ProductController extends CookiesController{
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 		}
 	}
-
 	
 	@GetMapping("/getCategorias")
 	public List<Categoria> getCategorias() {
@@ -92,7 +91,6 @@ public class ProductController extends CookiesController{
 		}
 	}
 	
-
 	@GetMapping("/getProductoCategoria/{categoria}")
 	public List<Product> getProducto_Categoria(@PathVariable String categoria) {
 		try {
@@ -101,6 +99,16 @@ public class ProductController extends CookiesController{
 		} catch(Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
+	}
+	
+	@GetMapping("/getCarrito")
+	public Carrito getCarrito(HttpServletRequest request) {
+		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		if (carrito==null) {
+			carrito = new Carrito();
+			request.getSession().setAttribute("carrito", carrito);
+		}
+		return carrito;
 	}
 	
 	@PostMapping("/addAlCarrito/{id}")
@@ -130,44 +138,6 @@ public class ProductController extends CookiesController{
 		}
 		return carrito;
 	}
-	
-	@PostMapping("/sumarCantidad/{id}")
-	public Carrito sumarCantidad(HttpServletRequest request, @PathVariable String id) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
-		if (carrito==null) {
-			carrito = new Carrito();
-			request.getSession().setAttribute(CARRITO, carrito);
-		}
-		Optional<Product> producto=productDao.findById(id);
-		if(producto.isPresent()) {
-			try {
-				if(producto.get().getCantidad()==0) throw new CarrefulException(HttpStatus.NOT_FOUND,"No hay stock disponible del producto");
-				carrito.add(producto.get(), 1);
-				producto.get().setCantidad(producto.get().getCantidad()-1);
-				productDao.delete(producto.get());
-				productDao.save(producto.get());
-				
-			}catch(Exception e) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-			}
-		}
-		
-
-		return carrito;
-	}
-	
-	/*@DeleteMapping("/borrarProducto/{id}")
-	public void borrarProducto(@PathVariable String id) {
-		try {
-			Optional<Product> optProduct = productDao.findById(id);
-			if (optProduct.isPresent())
-				productDao.deleteById(id);
-			else
-				throw new CarrefulException(HttpStatus.NOT_FOUND,EL_PRODUCTO_NO_EXISTE);
-		} catch(Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}
-	}*/
 	
 	@DeleteMapping("/borrarProducto/{id}")
 	public void borrarProductoDeLaBD(HttpServletRequest request, @PathVariable String id) {

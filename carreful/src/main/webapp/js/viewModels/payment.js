@@ -1,19 +1,14 @@
 define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		'jquery' ], function(ko, app, moduleUtils, accUtils, $) {
 
-	class PaymentViewModel{
+	class PaymentViewModel extends carritoVM{
 		constructor() {
-	
+			super(app);
 			var self = this;
 			
 			self.stripe = Stripe('pk_test_51IdbtOE3xk4z0l3iOwpaJ3Rp0n58pBWBVBVxrba7Vslzdk28K2SCTtqYgk16LXkXthMQ5kZQQPaTkMr34BLL6BlJ00AKbD4VQZ');
-			self.carrito = ko.observableArray([]);
-			self.total = ko.observable(0);
 			self.cupon = ko.observable("");
-			
-			
-			self.message = ko.observable();
-			self.error = ko.observable();
+
 			
 			// Header Config
 			self.headerConfig = ko.observable({
@@ -37,22 +32,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			this.calcularTotal()
 		};
 		
-		getCarrito(){
-			let self = this;
-			let data = {
-				url : "payments/getCarrito",
-				type : "get",
-				contentType : 'application/json',
-				success : function(response) {
-					self.message("Obtencion del carrito realizada");
-					self.carrito(response.products);
-				},
-				error : function(response) {
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-		}
 		
 		solicitarPreautorizacion() {
 			let self = this;
@@ -168,23 +147,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
-		calcularTotal(){
-			let self = this;
-			let aux;
-			let data = {
-				url : "payments/PrecioTotal",
-				type : "get",
-				contentType : 'application/json',
-				success : function(response) {
-					self.total(response);
-					
-				},
-				error : function(response) {
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-		}
+
 		
 		AplicarDescuento(){
 			let self = this;

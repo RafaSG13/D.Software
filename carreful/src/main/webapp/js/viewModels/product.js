@@ -1,25 +1,17 @@
 define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		'jquery' ], function(ko, app, moduleUtils, accUtils, $) {
 
-	class ProductViewModel {
+	class ProductViewModel extends carritoVM{
 		constructor() {
+			super(app);
 			var self = this;
 			
 			self.nombre = ko.observable("");
 			self.precio = ko.observable("");
 			self.cantidad = ko.observable("");
-			self.categoria = ko.observable();
-			
-
-			
-			self.carrito = ko.observableArray([]);
+			self.categoria = ko.observable();			
 			self.categorias = ko.observableArray([]);
-			self.carrito = ko.observableArray([]);
 			self.producto_categoria = ko.observableArray([]);
-		
-			
-			self.message = ko.observable(null);
-			self.error = ko.observable(null);
 			
 			// Header Config
 			self.headerConfig = ko.observable({
@@ -139,22 +131,6 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			$.ajax(data);
 		}
 		
-		getCarrito(){
-			let self = this;
-			let data = {
-				url : "product/getCarrito",
-				type : "get",
-				contentType : 'application/json',
-				success : function(response) {
-					self.carrito(response.products);
-				},
-				error : function(response) {
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-		}
-		
 		addAlCarrito(id) {
 			let self = this;
 			let data = {
@@ -188,25 +164,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			};
 			$.ajax(data);
 		}
-		
-		
-			sumarCantidad(id) {
-			let self = this;
-			let data = {
-				url : "product/sumarCantidad/" + id,
-				type : "post",
-				contentType : 'application/json',
-				success : function(response) {
-					self.message("Cantidad Actualizada");
-					self.carrito(response.products);
-				},
-				error : function(response) {
-					self.error(response.responseJSON.errorMessage);
-				}
-			};
-			$.ajax(data);
-		}
-		
+
 		register() {
 			app.router.go( { path : "register" } );
 		}

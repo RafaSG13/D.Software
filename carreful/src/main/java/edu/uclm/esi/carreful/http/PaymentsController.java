@@ -26,6 +26,8 @@ import com.stripe.param.PaymentIntentCreateParams;
 
 import edu.uclm.esi.carreful.dao.CorderDao;
 import edu.uclm.esi.carreful.dao.CuponDao;
+import edu.uclm.esi.carreful.dao.TokenDao;
+import edu.uclm.esi.carreful.dao.UserDao;
 import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
 import edu.uclm.esi.carreful.model.Corder;
@@ -47,6 +49,9 @@ public class PaymentsController extends CookiesController {
 	
 	@Autowired
 	CorderDao corderDao;
+		
+	@Autowired
+	UserDao userDao;
 	
 	@PostMapping("/solicitarPreautorizacion")
 	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
@@ -134,6 +139,32 @@ public class PaymentsController extends CookiesController {
 		}
 	
 		
+	}
+	
+	
+	@GetMapping("/PrecioTotal")
+	public double precioTotal(HttpServletRequest request) {
+		double total=0;
+		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		if (carrito==null) {
+			carrito = new Carrito();
+			request.getSession().setAttribute("carrito", carrito);
+		}
+			
+		Iterator<OrderedProduct> iterador_productos=carrito.getProducts().iterator();
+		while(iterador_productos.hasNext()) {
+			OrderedProduct aux = iterador_productos.next();
+			total+=aux.getAmount()*aux.getPrecio();
+		}
+		if(carrito.getCuponDescuento()!=null) {
+			if(carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("porcentual"))
+				total = total - (total*carrito.getCuponDescuento().getDescuento());
+			else if(carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("fijo"))
+				total = total - carrito.getCuponDescuento().getDescuento();
+		}
+		if(total<0) // si el descuento hace que el precio sea negativo, entonces lo cambiamos a que sea como minimo GRATIS
+			total = 0;
+		return total;
 	}
 	
 	
