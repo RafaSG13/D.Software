@@ -39,7 +39,7 @@ public abstract class Cupon {
 		this.fechaFin = rango.getFechaFin();
 	}
 	
-	public abstract void usarCupon();
+	public abstract void usarCupon(String sesion);
 	
 	public String getCodigo() {
 		return codigo;
