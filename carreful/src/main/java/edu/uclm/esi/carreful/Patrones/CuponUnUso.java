@@ -3,12 +3,11 @@ package edu.uclm.esi.carreful.Patrones;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
+
 
 import edu.uclm.esi.carreful.model.Cupon;
 
 @Entity
-
 public class CuponUnUso extends Cupon{
 	private boolean usado;
 	
@@ -28,8 +27,13 @@ public class CuponUnUso extends Cupon{
 
 	@Override
 	public void usarCupon() {
-		
 		usado=true;
+	}
+
+	@Override
+	public void usarCupon(String email) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

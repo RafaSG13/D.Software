@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,9 +25,13 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 
+import edu.uclm.esi.carreful.Patrones.CuponMultiple;
+import edu.uclm.esi.carreful.Patrones.CuponUnUso;
+import edu.uclm.esi.carreful.Patrones.CuponUnUsuario;
 import edu.uclm.esi.carreful.dao.CorderDao;
-import edu.uclm.esi.carreful.dao.CuponDao;
-import edu.uclm.esi.carreful.dao.TokenDao;
+import edu.uclm.esi.carreful.dao.CuponMultipleDao;
+import edu.uclm.esi.carreful.dao.CuponUnUsoDao;
+import edu.uclm.esi.carreful.dao.CuponUnUsuarioDao;
 import edu.uclm.esi.carreful.dao.UserDao;
 import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Carrito;
@@ -45,7 +50,11 @@ public class PaymentsController extends CookiesController {
 	}
 	
 	@Autowired
-	CuponDao cuponDao;
+	CuponUnUsoDao cuponUnUsoDao;
+	@Autowired
+	CuponUnUsuarioDao cuponUnUsuarioDao;
+	@Autowired
+	CuponMultipleDao cuponMultipleDao;
 	
 	@Autowired
 	CorderDao corderDao;
@@ -103,6 +112,8 @@ public class PaymentsController extends CookiesController {
 						"<a href='http://localhost/user/usarToken/" + token.getId() + "'>aquí</a>";
 				smtp.send(user.getEmail(), "Carreful confirmacion de Pedido.", texto);
 			}
+			
+			
 			return "Compra realizada con exito\nPedido con numero: "+pedido.getId();
 			
 		} catch (Exception e) {
@@ -118,18 +129,37 @@ public class PaymentsController extends CookiesController {
 				carrito =  new Carrito();
 				request.getSession().setAttribute("carrito",carrito);
 			}
-			Optional<Cupon> optcupon = cuponDao.findById(cupon);
-			if(!optcupon.isPresent()) throw new CarrefulException(HttpStatus.NOT_FOUND,"El cupon introducido no existe");
 			
-			else {
-				Cupon cuponDescuento = optcupon.get();
+			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(cupon);
+			Optional<CuponMultiple>optcuponMultiple = cuponMultipleDao.findById(cupon);
+			Optional<CuponUnUsuario>optcuponUnUsuario = cuponUnUsuarioDao.findById(cupon);
+			
+			if(!optcuponUnUso.isPresent() && !optcuponMultiple.isPresent() && !optcuponUnUsuario.isPresent())
+				throw new CarrefulException(HttpStatus.NOT_FOUND,"El cupon introducido no existe");
+			
+			if(optcuponUnUso.isPresent() && !optcuponUnUso.get().isUsado())
+				introducirCuponEnCarrito(request,optcuponUnUso.get());
+			
+			if(optcuponUnUsuario.isPresent()) {
+				
+				introducirCuponEnCarrito(request,optcuponUnUsuario.get());
+			}
+
+			
+			if(optcuponMultiple.isPresent())
+				introducirCuponEnCarrito(request,optcuponMultiple.get());
+			
+			
+			/*else {
+				Cupon cuponDescuento = optcuponUnUso.get();
 				if(cuponDescuento.getRango().comprobarValidez(Calendar.getInstance().getTime())) {
 					carrito.setCuponDescuento(cuponDescuento);
 					request.getSession().setAttribute("carrito", carrito);
+					
 				}
 				else throw new CarrefulException(HttpStatus.FORBIDDEN,"El cupon no es valido a dia de hoy");
 
-			}
+			}*/
 			}catch(CarrefulException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
@@ -168,8 +198,19 @@ public class PaymentsController extends CookiesController {
 			OrderedProduct aux = productos.next();
 			pedido+=aux.getName()+","+aux.getAmount()+","+aux.getPrecio()+"\n";
 		}
-		return pedido;
-		
+		return pedido;	
 	}
-
+	
+	private void introducirCuponEnCarrito(HttpServletRequest request,Cupon cupon) throws CarrefulException {
+		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		Cupon cuponDescuento = cupon;
+		System.out.print(cupon.getCodigo());
+		/*if(cuponDescuento.getRango().comprobarValidez(Calendar.getInstance().getTime())) {
+			carrito.setCuponDescuento(cuponDescuento);
+			request.getSession().setAttribute("carrito", carrito);
+			
+		}
+		else throw new CarrefulException(HttpStatus.FORBIDDEN,"El cupon no es valido a dia de hoy");
+	*/
+	}
 }

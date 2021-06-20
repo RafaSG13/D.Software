@@ -21,5 +21,11 @@ public class CuponMultiple extends Cupon{
 		System.out.println("Estoy sinedo usado, Cupon Multiple");
 		
 	}
+
+	@Override
+	public void usarCupon(String email) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

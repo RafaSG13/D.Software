@@ -23,6 +23,12 @@ public class CuponUnUsuario extends Cupon{
 		
 	}
 
+	@Override
+	public void usarCupon(String email) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
 

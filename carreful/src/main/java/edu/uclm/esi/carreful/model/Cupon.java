@@ -19,6 +19,7 @@ import edu.uclm.esi.carreful.Patrones.RangoDeFechas;
 public abstract class Cupon {
 	@Id @Column(length = 36)
 	protected String codigo;
+	
 	protected Date fechaInicio;
 	protected Date fechaFin;
 	protected double descuento;
@@ -40,6 +41,7 @@ public abstract class Cupon {
 	}
 	
 	public abstract void usarCupon();
+	public abstract void usarCupon(String email);
 	
 	public String getCodigo() {
 		return codigo;
