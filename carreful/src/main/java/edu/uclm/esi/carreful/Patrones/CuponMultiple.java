@@ -1,8 +1,11 @@
 package edu.uclm.esi.carreful.Patrones;
 
 import java.util.Date;
-import edu.uclm.esi.carreful.model.Cupon;
 
+import javax.persistence.Entity;
+
+import edu.uclm.esi.carreful.model.Cupon;
+@Entity
 public class CuponMultiple extends Cupon{
 	String usuario;
 	int vecesUsado;

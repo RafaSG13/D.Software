@@ -2,7 +2,12 @@ package edu.uclm.esi.carreful.Patrones;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+
 import edu.uclm.esi.carreful.model.Cupon;
+
+@Entity
 
 public class CuponUnUso extends Cupon{
 	private boolean usado;
@@ -23,8 +28,8 @@ public class CuponUnUso extends Cupon{
 
 	@Override
 	public void usarCupon() {
-		System.out.println("Estoy siendo Usado, Cupon Un uso");
 		
+		usado=true;
 	}
 
 	
