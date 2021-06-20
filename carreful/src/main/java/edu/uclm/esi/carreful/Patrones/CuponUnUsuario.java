@@ -15,6 +15,7 @@ public class CuponUnUsuario extends Cupon{
 
 	public CuponUnUsuario(String codigo, Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, String usuario) {
 		super(fechaInicio,fechaFin,descuento,tipoDescuento);
+
 	}
 	
 	public CuponUnUsuario() {

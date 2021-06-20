@@ -93,10 +93,17 @@ public class PaymentsController extends CookiesController {
 		}
 	}
 	
-	@GetMapping("/confirmarPedido")
-	public String confirmarPedido(HttpServletRequest request) {
+	@GetMapping("/confirmarPedido/{correo}")
+	public String confirmarPedido(HttpServletRequest request, @PathVariable String correo) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
+			Cupon cupon = carrito.getCuponDescuento();
+			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
+
+			if(user!=null) correo = user.getEmail(); 
+			cupon.usarCupon(correo);
+			//CuponDao.save(cupon);
+			//CuponDao.delete(cupon);
 			
 			Corder pedido = new Corder();
 			pedido.setPrecioTotal(precioTotal(request));
@@ -105,7 +112,6 @@ public class PaymentsController extends CookiesController {
 			
 			corderDao.save(pedido);
 			
-			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
 			if (user!=null) {
 				Token token = new Token((String) request.getSession().getAttribute("userEmail"));
 				tokenDao.save(token);
@@ -135,7 +141,8 @@ public class PaymentsController extends CookiesController {
 			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(cupon);
 			Optional<CuponMultiple>optcuponMultiple = cuponMultipleDao.findById(cupon);
 			Optional<CuponUnUsuario>optcuponUnUsuario = cuponUnUsuarioDao.findById(cupon);
-			
+					
+	
 			if(!optcuponUnUso.isPresent() && !optcuponMultiple.isPresent())
 				throw new CarrefulException(HttpStatus.NOT_FOUND,"El cupon introducido no existe");
 			
@@ -189,10 +196,13 @@ public class PaymentsController extends CookiesController {
 				total = total - (total*carrito.getCuponDescuento().getDescuento());
 			else if(carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("fijo"))
 				total = total - carrito.getCuponDescuento().getDescuento();
+			String correo = (String) request.getSession().getAttribute("userEmail");			
+			//if (correo==null) correo = ;
 		}
 		if(total<0) // si el descuento hace que el precio sea negativo, entonces lo cambiamos a que sea como minimo GRATIS
 			total = 0;
 		return total;
+
 	}
 		
 	public String sacarProductos(Iterator<OrderedProduct> productos){
