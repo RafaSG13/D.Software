@@ -13,9 +13,12 @@ public class CuponMultiple extends Cupon{
 	public CuponMultiple(String codigo, Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, String usuario) {
 		super(fechaInicio,fechaFin,descuento,tipoDescuento);
 		this.usuario=usuario;
-		
 	}
-
+	
+	public CuponMultiple() {
+		super();
+	}
+	
 	@Override
 	public void usarCupon() {
 		System.out.println("Estoy sinedo usado, Cupon Multiple");
@@ -24,7 +27,7 @@ public class CuponMultiple extends Cupon{
 
 	@Override
 	public void usarCupon(String email) {
-		
+		System.out.println("Estoy sinedo usado, Cupon Multiple");
 		
 	}
 	

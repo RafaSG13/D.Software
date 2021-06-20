@@ -16,6 +16,10 @@ public class CuponUnUso extends Cupon{
 		this.usado=usado;
 		
 	}
+	
+	public CuponUnUso() {
+		super();
+	}
 
 	public boolean isUsado() {
 		return usado;
@@ -29,12 +33,12 @@ public class CuponUnUso extends Cupon{
 	public void usarCupon() {
 		usado=true;
 	}
-
+	
 	@Override
 	public void usarCupon(String email) {
-		// TODO Auto-generated method stub
-		
+		usado=true;
 	}
+
 
 	
 }

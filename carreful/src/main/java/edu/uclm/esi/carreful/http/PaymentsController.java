@@ -51,8 +51,10 @@ public class PaymentsController extends CookiesController {
 	
 	@Autowired
 	CuponUnUsoDao cuponUnUsoDao;
+	
 	@Autowired
 	CuponUnUsuarioDao cuponUnUsuarioDao;
+	
 	@Autowired
 	CuponMultipleDao cuponMultipleDao;
 	
@@ -134,18 +136,19 @@ public class PaymentsController extends CookiesController {
 			Optional<CuponMultiple>optcuponMultiple = cuponMultipleDao.findById(cupon);
 			Optional<CuponUnUsuario>optcuponUnUsuario = cuponUnUsuarioDao.findById(cupon);
 			
-			if(!optcuponUnUso.isPresent() && !optcuponMultiple.isPresent() && !optcuponUnUsuario.isPresent())
+			if(!optcuponUnUso.isPresent() && !optcuponMultiple.isPresent())
 				throw new CarrefulException(HttpStatus.NOT_FOUND,"El cupon introducido no existe");
 			
 			if(optcuponUnUso.isPresent() && !optcuponUnUso.get().isUsado())
 				introducirCuponEnCarrito(request,optcuponUnUso.get());
+				
+				
 			
 			if(optcuponUnUsuario.isPresent()) {
 				
 				introducirCuponEnCarrito(request,optcuponUnUsuario.get());
 			}
 
-			
 			if(optcuponMultiple.isPresent())
 				introducirCuponEnCarrito(request,optcuponMultiple.get());
 			
@@ -203,14 +206,13 @@ public class PaymentsController extends CookiesController {
 	
 	private void introducirCuponEnCarrito(HttpServletRequest request,Cupon cupon) throws CarrefulException {
 		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
-		Cupon cuponDescuento = cupon;
-		System.out.print(cupon.getCodigo());
-		/*if(cuponDescuento.getRango().comprobarValidez(Calendar.getInstance().getTime())) {
-			carrito.setCuponDescuento(cuponDescuento);
+		
+		if(cupon.getRango().comprobarValidez(Calendar.getInstance().getTime())) {
+			carrito.setCuponDescuento(cupon);
 			request.getSession().setAttribute("carrito", carrito);
 			
 		}
 		else throw new CarrefulException(HttpStatus.FORBIDDEN,"El cupon no es valido a dia de hoy");
-	*/
+	
 	}
 }

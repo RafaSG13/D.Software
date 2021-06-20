@@ -28,11 +28,13 @@ public abstract class Cupon {
 	@Transient
 	protected RangoDeFechas rango;
 	
-
+	protected Cupon() {
+		super();
+		this.codigo =  UUID.randomUUID().toString();
+	}
 	
 	protected Cupon(Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento) {
-		super();
-		this.codigo =  UUID.randomUUID().toString();;
+		this();
 		this.descuento = descuento;
 		this.tipoDescuento = tipoDescuento;
 		this.rango = new RangoDeFechas(fechaInicio , fechaFin);
@@ -76,6 +78,7 @@ public abstract class Cupon {
 	
 	
 	public RangoDeFechas getRango() {
+		this.rango = new RangoDeFechas(fechaInicio , fechaFin);
 		return rango;
 	}
 }
