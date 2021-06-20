@@ -147,29 +147,20 @@ public class PaymentsController extends CookiesController {
 				throw new CarrefulException(HttpStatus.NOT_FOUND,"El cupon introducido no existe");
 			
 			if(optcuponUnUso.isPresent() && !optcuponUnUso.get().isUsado())
-				introducirCuponEnCarrito(request,optcuponUnUso.get());
+				carrito=introducirCuponEnCarrito(request,optcuponUnUso.get());
 				
 				
 			
 			if(optcuponUnUsuario.isPresent()) {
 				
-				introducirCuponEnCarrito(request,optcuponUnUsuario.get());
+				carrito = introducirCuponEnCarrito(request,optcuponUnUsuario.get());
 			}
 
 			if(optcuponMultiple.isPresent())
-				introducirCuponEnCarrito(request,optcuponMultiple.get());
+				carrito = introducirCuponEnCarrito(request,optcuponMultiple.get());
 			
+			request.getSession().setAttribute("carrito", carrito);
 			
-			/*else {
-				Cupon cuponDescuento = optcuponUnUso.get();
-				if(cuponDescuento.getRango().comprobarValidez(Calendar.getInstance().getTime())) {
-					carrito.setCuponDescuento(cuponDescuento);
-					request.getSession().setAttribute("carrito", carrito);
-					
-				}
-				else throw new CarrefulException(HttpStatus.FORBIDDEN,"El cupon no es valido a dia de hoy");
-
-			}*/
 			}catch(CarrefulException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
 		}
@@ -192,12 +183,12 @@ public class PaymentsController extends CookiesController {
 			total+=aux.getAmount()*aux.getPrecio();
 		}
 		if(carrito.getCuponDescuento()!=null) {
-			if(carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("porcentual"))
+			if(carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("porcentual")) {
 				total = total - (total*carrito.getCuponDescuento().getDescuento());
+			}
+				
 			else if(carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("fijo"))
 				total = total - carrito.getCuponDescuento().getDescuento();
-			String correo = (String) request.getSession().getAttribute("userEmail");			
-			//if (correo==null) correo = ;
 		}
 		if(total<0) // si el descuento hace que el precio sea negativo, entonces lo cambiamos a que sea como minimo GRATIS
 			total = 0;
@@ -214,7 +205,7 @@ public class PaymentsController extends CookiesController {
 		return pedido;	
 	}
 	
-	private void introducirCuponEnCarrito(HttpServletRequest request,Cupon cupon) throws CarrefulException {
+	private Carrito introducirCuponEnCarrito(HttpServletRequest request,Cupon cupon) throws CarrefulException {
 		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
 		
 		if(cupon.getRango().comprobarValidez(Calendar.getInstance().getTime())) {
@@ -223,6 +214,6 @@ public class PaymentsController extends CookiesController {
 			
 		}
 		else throw new CarrefulException(HttpStatus.FORBIDDEN,"El cupon no es valido a dia de hoy");
-	
+		return carrito;
 	}
 }

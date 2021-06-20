@@ -8,6 +8,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			
 			self.stripe = Stripe('pk_test_51IdbtOE3xk4z0l3iOwpaJ3Rp0n58pBWBVBVxrba7Vslzdk28K2SCTtqYgk16LXkXthMQ5kZQQPaTkMr34BLL6BlJ00AKbD4VQZ');
 			self.cupon = ko.observable("");
+			self.correo = ko.observable("");
 
 			
 			// Header Config
@@ -167,6 +168,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			};
 			$.ajax(data);
 		}
+		
 
 
 		disconnected() {
