@@ -21,14 +21,12 @@ public class CuponMultiple extends Cupon{
 	
 	@Override
 	public void usarCupon() {
-		System.out.println("Estoy sinedo usado, Cupon Multiple");
-		
+		vecesUsado++;
 	}
 
 	@Override
 	public void usarCupon(String email) {
-		System.out.println("Estoy sinedo usado, Cupon Multiple");
-		
+		vecesUsado++;
 	}
 	
 }
