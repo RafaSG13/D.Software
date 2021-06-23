@@ -16,6 +16,7 @@
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {
+					self.error("");
 					self.message("Obtencion del carrito realizada");
 					self.carrito(response.products);
 				},

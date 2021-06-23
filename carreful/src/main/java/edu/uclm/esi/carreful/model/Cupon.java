@@ -15,7 +15,6 @@ import edu.uclm.esi.carreful.Patrones.RangoDeFechas;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 
-
 public abstract class Cupon {
 	@Id @Column(length = 36)
 	protected String codigo;
@@ -42,7 +41,6 @@ public abstract class Cupon {
 		this.fechaFin = rango.getFechaFin();
 	}
 	
-	public abstract void usarCupon();
 	public abstract void usarCupon(String email);
 	
 	public String getCodigo() {

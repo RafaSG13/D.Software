@@ -43,7 +43,9 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				contentType : 'application/json',
 				success : function(response) {
 					self.message("Producto guardado");
+					self.error("");
 					self.getProductos_Categoria(info.categoria.id);
+					
 				},
 				error : function(response) {
 					/*self.error(response.responseJSON.errorMessage);*/
@@ -68,6 +70,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				contentType : 'application/json',
 				success : function(response) {
 					self.message("Producto guardado");
+					self.error("");
 					self.getProductos_Categoria(info.categoria.id);
 				},
 				error : function(response) {
@@ -119,6 +122,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				type : "delete",
 				contentType : 'application/json',
 				success : function(response) {
+					self.error("");
 					self.message("Producto eliminado");
 			
 				},
@@ -138,6 +142,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				type : "post",
 				contentType : 'application/json',
 				success : function(response) {
+					self.error();
 					self.message("Producto añadido al carrito");
 					self.carrito(response.products);
 				},
@@ -155,6 +160,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				type : "post",
 				contentType : 'application/json',
 				success : function(response) {
+					self.error("");
 					self.message("Producto restado del carrito");
 					self.carrito(response.products);
 				},

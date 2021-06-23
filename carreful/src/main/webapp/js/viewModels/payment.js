@@ -8,7 +8,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 			
 			self.stripe = Stripe('pk_test_51IdbtOE3xk4z0l3iOwpaJ3Rp0n58pBWBVBVxrba7Vslzdk28K2SCTtqYgk16LXkXthMQ5kZQQPaTkMr34BLL6BlJ00AKbD4VQZ');
 			self.cupon = ko.observable("");
-			self.correo = ko.observable("");
+			self.email = ko.observable("");
 
 			
 			// Header Config
@@ -139,6 +139,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 				success : function(response) {
 					self.getCarrito();
 					self.message("Productos decrementados");
+					self.error("");
 					self.calcularTotal();
 				},
 				error : function(response) {
@@ -152,13 +153,18 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		
 		AplicarDescuento(){
 			let self = this;
-			
+			let info = {
+				cupon : self.cupon(),
+				email : self.email()
+			};
 			let data = {
-				url : "payments/AplicarDescuento/"+self.cupon(),
+				data : JSON.stringify(info),
+				url : "payments/AplicarDescuento",
 				type : "post",
 				contentType : 'application/json',
 				success : function(response) {
 					self.message("Descuento Aplicado correctamente");
+					self.error("");
 					self.calcularTotal();
 					
 				},
