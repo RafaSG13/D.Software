@@ -182,7 +182,7 @@ public class PaymentsController extends CookiesController {
 			} else {
 				if (!emailAlternativo.equals("")) // si hay un email introducido, significa que el usuario quiere usar ese email aunque este logueado en la pagina
 					emailUsado = emailAlternativo;
-				
+				System.out.println(emailUsado);
 				if (!(emailUsado.contains("@") && (emailUsado.contains(".com") || emailUsado.contains(".es"))))
 					throw new CarrefulException(HttpStatus.FORBIDDEN, "El formato del correo introducido no es valido");
 
@@ -219,8 +219,9 @@ public class PaymentsController extends CookiesController {
 				total = total - (total * carrito.getCuponDescuento().getDescuento() / 100);
 			}
 
-			else if (carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("fijo"))
+			else if (carrito.getCuponDescuento().getTipoDescuento().equalsIgnoreCase("fijo")) {
 				total = total - carrito.getCuponDescuento().getDescuento();
+			}
 		}
 		if (total < 0) // si el descuento hace que el precio sea negativo, entonces lo cambiamos a que
 						// sea como minimo GRATIS

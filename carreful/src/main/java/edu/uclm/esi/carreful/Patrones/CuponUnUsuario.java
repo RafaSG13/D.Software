@@ -8,7 +8,10 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 
+import org.springframework.http.HttpStatus;
+
 import edu.uclm.esi.carreful.dao.UserDao;
+import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Cupon;
 
 @Entity
@@ -38,13 +41,13 @@ public class CuponUnUsuario extends Cupon{
 		usuario= usuario+ ","+ email;
 	}
 
-	public boolean contieneUsuario(String email) {
+	public boolean contieneUsuario(String email) throws CarrefulException {
 		if (usuario== null) {
 			usuario = "";
 			return false;
 		}
 		ArrayList<String> usuarios = new ArrayList<String>(Arrays.asList(usuario.split(",")));
-		if (usuarios.contains(email)) return true;
+		if (usuarios.contains(email)) throw new CarrefulException(HttpStatus.FORBIDDEN,"Esta intentando utilizar un cupon que ya esta registrado");
 		return false;
 	}
 
