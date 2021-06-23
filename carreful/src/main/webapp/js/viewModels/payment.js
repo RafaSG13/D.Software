@@ -116,7 +116,7 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		confirmarPedido() {
 			let self = this;
 			let data = {
-				url : "payments/confirmarPedido",
+				url : "payments/confirmarPedido/"+self.email(),
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {

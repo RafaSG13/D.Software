@@ -91,8 +91,8 @@ public class PaymentsController extends CookiesController {
 		}
 	}
 
-	@GetMapping("/confirmarPedido")
-	public String confirmarPedido(HttpServletRequest request) {
+	@GetMapping("/confirmarPedido/{email}")
+	public String confirmarPedido(HttpServletRequest request,@PathVariable String email) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
 			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
@@ -103,7 +103,7 @@ public class PaymentsController extends CookiesController {
 			pedido.setPedido(sacarProductos(carrito.getProducts().iterator()));
 
 			corderDao.save(pedido);
-
+			
 			if (user != null) {
 				Token token = new Token((String) request.getSession().getAttribute("userEmail"));
 				tokenDao.save(token);
@@ -112,6 +112,11 @@ public class PaymentsController extends CookiesController {
 						+ token.getId() + "'>aquí</a>";
 				smtp.send(user.getEmail(), "Carreful confirmacion de Pedido.", texto);
 			}
+			String emailUsado="";
+			if(!email.equals(""))
+				emailUsado=email;
+			else
+				emailUsado= (String) request.getSession().getAttribute("userEmail");
 
 			Cupon cupon = carrito.getCuponDescuento();
 			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(cupon.getCodigo());
@@ -125,13 +130,13 @@ public class PaymentsController extends CookiesController {
 			}
 
 			if (optcuponUnUsuario.isPresent()) {
-				optcuponUnUsuario.get().usarCupon((String) request.getSession().getAttribute("userEmail"));
+				optcuponUnUsuario.get().usarCupon(emailUsado);
 				cuponUnUsuarioDao.deleteById(optcuponUnUsuario.get().getCodigo());
 				cuponUnUsuarioDao.save(optcuponUnUsuario.get());
 			}
 
 			if (optcuponMultiple.isPresent()) {
-				optcuponMultiple.get().usarCupon((String) request.getSession().getAttribute("userEmail"));
+				optcuponMultiple.get().usarCupon(emailUsado);
 				cuponMultipleDao.deleteById(optcuponMultiple.get().getCodigo());
 				cuponMultipleDao.save(optcuponMultiple.get());
 			}
@@ -149,14 +154,18 @@ public class PaymentsController extends CookiesController {
 			JSONObject json = new JSONObject(info);
 			String codigoCupon = json.optString("cupon");
 			String emailAlternativo = json.optString("email");
-			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+			String emailUsado ="";
+			
+			if(request.getSession().getAttribute("userEmail")!=null)
+				emailUsado = (String) request.getSession().getAttribute("userEmail");
 
+			
+			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
 			if(carrito==null) { //Si no hay carrito en la session lo crea y lo inserta.
 				carrito =  new Carrito();
 				request.getSession().setAttribute("carrito",carrito);
 			}
-			String email = (String) request.getSession().getAttribute("userEmail");
-
+			
 			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(codigoCupon);
 			Optional<CuponMultiple> optcuponMultiple = cuponMultipleDao.findById(codigoCupon);
 			Optional<CuponUnUsuario> optcuponUnUsuario = cuponUnUsuarioDao.findById(codigoCupon);
@@ -167,17 +176,17 @@ public class PaymentsController extends CookiesController {
 			if (optcuponUnUso.isPresent() && !optcuponUnUso.get().isUsado())
 				carrito = introducirCuponEnCarrito(request, optcuponUnUso.get());
 
-			if (emailAlternativo.equals("") && email == null) {
+			if (emailAlternativo.equals("") && emailUsado.equals("")) {
 				throw new CarrefulException(HttpStatus.FORBIDDEN,
 						"Para utilizar este tipo de cupon necesitas introducir un email en el campo email alternativo o bien iniciar sesion");
 			} else {
-				if (!emailAlternativo.equals("") && email != null)
-					email = emailAlternativo;
+				if (!emailAlternativo.equals("")) // si hay un email introducido, significa que el usuario quiere usar ese email aunque este logueado en la pagina
+					emailUsado = emailAlternativo;
 				
-				if (!(email.contains("@") && (email.contains(".com") || email.contains(".es"))))
+				if (!(emailUsado.contains("@") && (emailUsado.contains(".com") || emailUsado.contains(".es"))))
 					throw new CarrefulException(HttpStatus.FORBIDDEN, "El formato del correo introducido no es valido");
 
-				if (optcuponUnUsuario.isPresent() && !optcuponUnUsuario.get().contieneUsuario(email))
+				if (optcuponUnUsuario.isPresent() && !optcuponUnUsuario.get().contieneUsuario(emailUsado))
 					carrito = introducirCuponEnCarrito(request, optcuponUnUsuario.get());
 
 				if (optcuponMultiple.isPresent())
@@ -187,8 +196,6 @@ public class PaymentsController extends CookiesController {
 
 		} catch (CarrefulException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-		}catch(NullPointerException nullexception) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 		}
 
 	}
