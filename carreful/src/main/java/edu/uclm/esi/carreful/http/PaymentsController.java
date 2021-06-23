@@ -113,6 +113,29 @@ public class PaymentsController extends CookiesController {
 				smtp.send(user.getEmail(), "Carreful confirmacion de Pedido.", texto);
 			}
 
+			Cupon cupon = carrito.getCuponDescuento();
+			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(cupon.getCodigo());
+			Optional<CuponMultiple> optcuponMultiple = cuponMultipleDao.findById(cupon.getCodigo());
+			Optional<CuponUnUsuario> optcuponUnUsuario = cuponUnUsuarioDao.findById(cupon.getCodigo());
+
+			if (optcuponUnUso.isPresent()) {
+				optcuponUnUso.get().usarCupon("");
+				cuponUnUsoDao.deleteById(optcuponUnUso.get().getCodigo());
+				cuponUnUsoDao.save(optcuponUnUso.get());
+			}
+
+			if (optcuponUnUsuario.isPresent()) {
+				optcuponUnUsuario.get().usarCupon((String) request.getSession().getAttribute("userEmail"));
+				cuponUnUsuarioDao.deleteById(optcuponUnUsuario.get().getCodigo());
+				cuponUnUsuarioDao.save(optcuponUnUsuario.get());
+			}
+
+			if (optcuponMultiple.isPresent()) {
+				optcuponMultiple.get().usarCupon((String) request.getSession().getAttribute("userEmail"));
+				cuponMultipleDao.deleteById(optcuponMultiple.get().getCodigo());
+				cuponMultipleDao.save(optcuponMultiple.get());
+			}
+
 			return "Compra realizada con exito\nPedido con numero: " + pedido.getId();
 
 		} catch (Exception e) {
@@ -120,19 +143,22 @@ public class PaymentsController extends CookiesController {
 		}
 	}
 
-	@PostMapping("/AplicarDescuento/{cupon}")
-	public void AplicarDescuento(HttpServletRequest request, @PathVariable String cupon) {
+	@PostMapping("/AplicarDescuento")
+	public void AplicarDescuento(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
+			JSONObject json = new JSONObject(info);
+			String codigoCupon = json.optString("cupon");
+			String emailAlternativo = json.optString("email");
 			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
-			String email = (String) request.getSession().getAttribute("email");
+			String email = (String) request.getSession().getAttribute("userEmail");
 			if (carrito == null) { // Si no hay carrito en la session lo crea y lo inserta.
 				carrito = new Carrito();
 				request.getSession().setAttribute("carrito", carrito);
 			}
 
-			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(cupon);
-			Optional<CuponMultiple> optcuponMultiple = cuponMultipleDao.findById(cupon);
-			Optional<CuponUnUsuario> optcuponUnUsuario = cuponUnUsuarioDao.findById(cupon);
+			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(codigoCupon);
+			Optional<CuponMultiple> optcuponMultiple = cuponMultipleDao.findById(codigoCupon);
+			Optional<CuponUnUsuario> optcuponUnUsuario = cuponUnUsuarioDao.findById(codigoCupon);
 
 			if (!optcuponUnUso.isPresent() && !optcuponMultiple.isPresent() && !optcuponUnUsuario.isPresent())
 				throw new CarrefulException(HttpStatus.NOT_FOUND, "El cupon introducido no existe");
@@ -140,14 +166,22 @@ public class PaymentsController extends CookiesController {
 			if (optcuponUnUso.isPresent() && !optcuponUnUso.get().isUsado())
 				carrito = introducirCuponEnCarrito(request, optcuponUnUso.get());
 
-			if (optcuponUnUsuario.isPresent() && !optcuponUnUsuario.get().contieneUsuario(email)) {
+			if (emailAlternativo.equals("") && email == null) {
+				throw new CarrefulException(HttpStatus.FORBIDDEN,
+						"Para utilizar este tipo de cupon necesitas introducir un email en el campo email alternativo o bien iniciar sesion");
+			} else {
+				if (!emailAlternativo.equals("") && email != null)
+					email = emailAlternativo;
+				
+				if (!(email.contains("@") && (email.contains(".com") || email.contains(".es"))))
+					throw new CarrefulException(HttpStatus.FORBIDDEN, "El formato del correo introducido no es valido");
 
-				carrito = introducirCuponEnCarrito(request, optcuponUnUsuario.get());
+				if (optcuponUnUsuario.isPresent() && !optcuponUnUsuario.get().contieneUsuario(email))
+					carrito = introducirCuponEnCarrito(request, optcuponUnUsuario.get());
+
+				if (optcuponMultiple.isPresent())
+					carrito = introducirCuponEnCarrito(request, optcuponMultiple.get());
 			}
-
-			if (optcuponMultiple.isPresent())
-				carrito = introducirCuponEnCarrito(request, optcuponMultiple.get());
-
 			request.getSession().setAttribute("carrito", carrito);
 
 		} catch (CarrefulException e) {

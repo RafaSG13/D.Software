@@ -34,20 +34,16 @@ public class CuponUnUsuario extends Cupon{
 	}
 
 	@Override
-	public void usarCupon() {
-		System.out.println("Estoy siendo usado, Cupon Un uso por Usuario");
-		
-	}
-
-	@Override
 	public void usarCupon(String email) {
-		usuario= usuario+ ", "+ email;
-		System.out.println("Estoy siendo usado, Cupon Un uso por Usuario");
-		
+		usuario= usuario+ ","+ email;
 	}
 
 	public boolean contieneUsuario(String email) {
-		ArrayList<String> usuarios = new ArrayList<String>(Arrays.asList(usuario.split(", ")));
+		if (usuario== null) {
+			usuario = "";
+			return false;
+		}
+		ArrayList<String> usuarios = new ArrayList<String>(Arrays.asList(usuario.split(",")));
 		if (usuarios.contains(email)) return true;
 		return false;
 	}

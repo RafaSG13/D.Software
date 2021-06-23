@@ -28,11 +28,6 @@ public class CuponUnUso extends Cupon{
 	public void setUsado(boolean usado) {
 		this.usado = usado;
 	}
-
-	@Override
-	public void usarCupon() {
-		usado=true;
-	}
 	
 	@Override
 	public void usarCupon(String email) {
