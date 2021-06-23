@@ -19,6 +19,12 @@ public class CuponMultiple extends Cupon{
 		super();
 	}
 
+	
+	@Override
+	public void usarCupon() {
+		vecesUsado++;
+	}
+
 
 	@Override
 	public void usarCupon(String email) {
