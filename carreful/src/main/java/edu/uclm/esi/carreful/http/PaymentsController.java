@@ -136,6 +136,7 @@ public class PaymentsController extends CookiesController {
 			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(cupon);
 			Optional<CuponMultiple>optcuponMultiple = cuponMultipleDao.findById(cupon);
 			Optional<CuponUnUsuario>optcuponUnUsuario = cuponUnUsuarioDao.findById(cupon);
+	
 					
 	
 			if(!optcuponUnUso.isPresent() && !optcuponMultiple.isPresent())
