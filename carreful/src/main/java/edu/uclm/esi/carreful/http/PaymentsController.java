@@ -93,18 +93,13 @@ public class PaymentsController extends CookiesController {
 		}
 	}
 	
-	@GetMapping("/confirmarPedido/{correo}")
-	public String confirmarPedido(HttpServletRequest request, @PathVariable String correo) {
+	@GetMapping("/confirmarPedido")
+	public String confirmarPedido(HttpServletRequest request) {
 		try {
 			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
 			Cupon cupon = carrito.getCuponDescuento();
 			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
 
-			if(user!=null) correo = user.getEmail(); 
-			cupon.usarCupon(correo);
-			//CuponDao.save(cupon);
-			//CuponDao.delete(cupon);
-			
 			Corder pedido = new Corder();
 			pedido.setPrecioTotal(precioTotal(request));
 			pedido.setState("Preparandose");
