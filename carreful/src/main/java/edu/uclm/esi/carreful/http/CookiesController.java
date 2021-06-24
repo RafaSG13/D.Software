@@ -1,7 +1,6 @@
 package edu.uclm.esi.carreful.http;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,23 +8,18 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import edu.uclm.esi.carreful.dao.TokenDao;
-import edu.uclm.esi.carreful.dao.UserDao;
-import edu.uclm.esi.carreful.exceptions.CarrefulException;
-import edu.uclm.esi.carreful.model.Carrito;
-import edu.uclm.esi.carreful.model.OrderedProduct;
 import edu.uclm.esi.carreful.tokens.Token;
 
 
 
 public abstract class CookiesController {
-	public final static String COOKIE_NAME = "laCookie";
-	public final static String COOKIE_PATH = "/";
+	public static final  String COOKIE_NAME = "laCookie";
+	public static final  String COOKIE_PATH = "/";
 	
 	@Autowired
 	TokenDao tokenDao;

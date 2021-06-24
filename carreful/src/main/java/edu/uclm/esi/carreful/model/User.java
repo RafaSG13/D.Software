@@ -19,7 +19,7 @@ public class User {
 	private String picture;
 	private boolean rol;
 	
-	public User() { }
+	public User() { /*Metodo vacio para que spring/hibernate pueda instanciar el objeto*/}
 
 	public String getEmail() {
 		return email;

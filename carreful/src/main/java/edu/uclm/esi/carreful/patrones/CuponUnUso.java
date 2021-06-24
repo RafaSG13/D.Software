@@ -1,4 +1,4 @@
-package edu.uclm.esi.carreful.Patrones;
+package edu.uclm.esi.carreful.patrones;
 
 import java.util.Date;
 
@@ -11,7 +11,7 @@ import edu.uclm.esi.carreful.model.Cupon;
 public class CuponUnUso extends Cupon{
 	private boolean usado;
 	
-	public CuponUnUso(String codigo, Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, boolean usado) {
+	public CuponUnUso(Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, boolean usado) {
 		super(fechaInicio,fechaFin,descuento,tipoDescuento);
 		this.usado=usado;
 		

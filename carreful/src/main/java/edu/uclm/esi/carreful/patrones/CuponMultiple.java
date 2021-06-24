@@ -1,4 +1,4 @@
-package edu.uclm.esi.carreful.Patrones;
+package edu.uclm.esi.carreful.patrones;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ public class CuponMultiple extends Cupon{
 	String usuario;
 	int vecesUsado;
 	
-	public CuponMultiple(String codigo, Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, String usuario) {
+	public CuponMultiple(Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, String usuario) {
 		super(fechaInicio,fechaFin,descuento,tipoDescuento);
 		this.usuario=usuario;
 	}

@@ -1,16 +1,10 @@
-package edu.uclm.esi.carreful.Patrones;
+package edu.uclm.esi.carreful.patrones;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.persistence.Entity;
-
 import org.springframework.http.HttpStatus;
-
-import edu.uclm.esi.carreful.dao.UserDao;
 import edu.uclm.esi.carreful.exceptions.CarrefulException;
 import edu.uclm.esi.carreful.model.Cupon;
 
@@ -18,7 +12,7 @@ import edu.uclm.esi.carreful.model.Cupon;
 public class CuponUnUsuario extends Cupon{
 	private String usuario;
 
-	public CuponUnUsuario(String codigo, Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, String usuario) {
+	public CuponUnUsuario(Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, String usuario) {
 		super(fechaInicio,fechaFin,descuento,tipoDescuento);
 		this.usuario= usuario;
 
@@ -46,7 +40,7 @@ public class CuponUnUsuario extends Cupon{
 			usuario = "";
 			return false;
 		}
-		ArrayList<String> usuarios = new ArrayList<String>(Arrays.asList(usuario.split(",")));
+		ArrayList<String> usuarios = new ArrayList<>(Arrays.asList(usuario.split(",")));
 		if (usuarios.contains(email)) throw new CarrefulException(HttpStatus.FORBIDDEN,"Esta intentando utilizar un cupon que ya esta registrado");
 		return false;
 	}

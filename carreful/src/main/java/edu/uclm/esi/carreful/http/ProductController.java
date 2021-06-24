@@ -1,16 +1,11 @@
 package edu.uclm.esi.carreful.http;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,13 +34,13 @@ public class ProductController extends CookiesController{
 	@Autowired
 	private CategoriaDao categoriaDao;
 	
-	private final static String EL_PRODUCTO_NO_EXISTE="El producto no existe";
-	private final static String CARRITO="carrito";
+	private static final  String EL_PRODUCTO_NO_EXISTE="El producto no existe";
+	private static final  String CADENA_CARRITO="carrito";
 	
 	@PostMapping("/add")
 	public void add(HttpServletRequest request,@RequestBody Product product) {
 		try {
-			if(request.getSession().getAttribute("rol")==null || (boolean) request.getSession().getAttribute("rol")==false)
+			if(request.getSession().getAttribute("rol")==null || !(boolean) request.getSession().getAttribute("rol"))
 				throw new CarrefulException(HttpStatus.FORBIDDEN,"No tiene permiso para añadir un producto a la Base de Datos");
 	
 			Optional<Product> optProduct=productDao.findByNombre(product.getNombre());
@@ -66,7 +61,7 @@ public class ProductController extends CookiesController{
 	@PostMapping("/update")
 	public void update(HttpServletRequest request,@RequestBody Product product) {
 		try {
-			if(request.getSession().getAttribute("rol")==null || (boolean) request.getSession().getAttribute("rol")==false)
+			if(request.getSession().getAttribute("rol")==null || !(boolean) request.getSession().getAttribute("rol"))
 				throw new CarrefulException(HttpStatus.FORBIDDEN,"No tiene permiso para modificar un producto de la Base de Datos");
 	
 			Optional<Product> optProduct=productDao.findByNombre(product.getNombre());
@@ -92,7 +87,7 @@ public class ProductController extends CookiesController{
 	}
 	
 	@GetMapping("/getProductoCategoria/{categoria}")
-	public List<Product> getProducto_Categoria(@PathVariable String categoria) {
+	public List<Product> getProductoCategoria(@PathVariable String categoria) {
 		try {
 			Optional<Categoria> categoriaProducto=categoriaDao.findById(categoria);
 			return productDao.findByCategoria(categoriaProducto);
@@ -103,20 +98,20 @@ public class ProductController extends CookiesController{
 	
 	@GetMapping("/getCarrito")
 	public Carrito getCarrito(HttpServletRequest request) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		Carrito carrito = (Carrito) request.getSession().getAttribute(CADENA_CARRITO);
 		if (carrito==null) {
 			carrito = new Carrito();
-			request.getSession().setAttribute("carrito", carrito);
+			request.getSession().setAttribute(CADENA_CARRITO, carrito);
 		}
 		return carrito;
 	}
 	
 	@PostMapping("/addAlCarrito/{id}")
 	public Carrito addAlCarrito(HttpServletRequest request, @PathVariable String id) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
+		Carrito carrito = (Carrito) request.getSession().getAttribute(CADENA_CARRITO);
 		if (carrito==null) {
 			carrito = new Carrito();
-			request.getSession().setAttribute(CARRITO, carrito);
+			request.getSession().setAttribute(CADENA_CARRITO, carrito);
 		}
 		
 		Optional<Product> producto = productDao.findById(id);
@@ -156,15 +151,22 @@ public class ProductController extends CookiesController{
 	
 	@PostMapping("/borrarDelCarrito/{id}")
 	public Carrito borrarDelCarrito(HttpServletRequest request, @PathVariable String id) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
+		Carrito carrito = (Carrito) request.getSession().getAttribute(CADENA_CARRITO);
 		if (carrito==null) {
 			carrito = new Carrito();
-			request.getSession().setAttribute(CARRITO, carrito);
+			request.getSession().setAttribute(CADENA_CARRITO, carrito);
 		}
-		Product producto = productDao.findById(id).get();
-		
-
 		try {
+			
+			Product producto = null;
+			Optional<Product> optproduct= productDao.findById(id);
+			
+			if(optproduct.isPresent())
+				producto= optproduct.get();
+			else
+				throw new CarrefulException(HttpStatus.NOT_FOUND,"El producto no ha sido encontrado en la base de datos");
+			
+			
 			carrito.subtract(producto, 1);
 			if(carrito.getAmount(producto)==0) {
 				carrito.remove(producto);
@@ -178,13 +180,13 @@ public class ProductController extends CookiesController{
 	
 	@PostMapping("/decrementarStock")
 	public void decrementarStock(HttpServletRequest request) {
-		Carrito carrito = (Carrito) request.getSession().getAttribute(CARRITO);
+		Carrito carrito = (Carrito) request.getSession().getAttribute(CADENA_CARRITO);
 		if (carrito==null) {
 			carrito = new Carrito();
-			request.getSession().setAttribute(CARRITO, carrito);
+			request.getSession().setAttribute(CADENA_CARRITO, carrito);
 		}
 		
-		ArrayList<OrderedProduct> lista = new ArrayList<OrderedProduct>(carrito.getProducts());
+		ArrayList<OrderedProduct> lista = new ArrayList<>(carrito.getProducts());
 		
 		for(int i=0; i<lista.size(); i++) {
 			Product product = lista.get(i).getProduct();
@@ -194,7 +196,7 @@ public class ProductController extends CookiesController{
 		}
 		
 		carrito.getProducts().removeAll(carrito.getProducts());
-		request.getSession().setAttribute("carrito", carrito); // el carrito se pone vacio de nuevo al decrementar el stock
+		request.getSession().setAttribute(CADENA_CARRITO, carrito); // el carrito se pone vacio de nuevo al decrementar el stock
 		
 	}
 }

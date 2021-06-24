@@ -9,7 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
-import edu.uclm.esi.carreful.Patrones.RangoDeFechas;
+
+import edu.uclm.esi.carreful.patrones.RangoDeFechas;
 
 
 @Entity

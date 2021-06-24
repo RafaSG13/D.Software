@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,9 +24,6 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 
-import edu.uclm.esi.carreful.Patrones.CuponMultiple;
-import edu.uclm.esi.carreful.Patrones.CuponUnUso;
-import edu.uclm.esi.carreful.Patrones.CuponUnUsuario;
 import edu.uclm.esi.carreful.dao.CorderDao;
 import edu.uclm.esi.carreful.dao.CuponMultipleDao;
 import edu.uclm.esi.carreful.dao.CuponUnUsoDao;
@@ -39,6 +35,9 @@ import edu.uclm.esi.carreful.model.Corder;
 import edu.uclm.esi.carreful.model.Cupon;
 import edu.uclm.esi.carreful.model.OrderedProduct;
 import edu.uclm.esi.carreful.model.User;
+import edu.uclm.esi.carreful.patrones.CuponMultiple;
+import edu.uclm.esi.carreful.patrones.CuponUnUso;
+import edu.uclm.esi.carreful.patrones.CuponUnUsuario;
 import edu.uclm.esi.carreful.tokens.Email;
 import edu.uclm.esi.carreful.tokens.Token;
 
@@ -63,14 +62,17 @@ public class PaymentsController extends CookiesController {
 
 	@Autowired
 	UserDao userDao;
+	
+	private String cadenaUserEmail = "userEmail";
+	private String cadenaCarrito = "carrito";
 
 	@PostMapping("/solicitarPreautorizacion")
 	public String solicitarPreautorizacion(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
-			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+			Carrito carrito = (Carrito) request.getSession().getAttribute(cadenaCarrito);
 			if (carrito == null) {
 				carrito = new Carrito();
-				request.getSession().setAttribute("carrito", carrito);
+				request.getSession().setAttribute(cadenaCarrito, carrito);
 			}
 			if (carrito.getProducts().isEmpty())
 				throw new CarrefulException(HttpStatus.FORBIDDEN, "No hay productos en el Carrito, por favor, "
@@ -94,8 +96,8 @@ public class PaymentsController extends CookiesController {
 	@GetMapping("/confirmarPedido/{email}")
 	public String confirmarPedido(HttpServletRequest request,@PathVariable String email) {
 		try {
-			Carrito carrito=(Carrito) request.getSession().getAttribute("carrito");
-			User user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
+			Carrito carrito=(Carrito) request.getSession().getAttribute(cadenaCarrito);
+			User user = userDao.findByEmail((String) request.getSession().getAttribute(cadenaUserEmail));
 
 			Corder pedido = new Corder();
 			pedido.setPrecioTotal(precioTotal(request));
@@ -105,7 +107,7 @@ public class PaymentsController extends CookiesController {
 			corderDao.save(pedido);
 			
 			if (user != null) {
-				Token token = new Token((String) request.getSession().getAttribute("userEmail"));
+				Token token = new Token((String) request.getSession().getAttribute(cadenaUserEmail));
 				tokenDao.save(token);
 				Email smtp = new Email();
 				String texto = "Su pedido es el siguiente: " + "<a href='http://localhost/user/usarToken/"
@@ -116,7 +118,7 @@ public class PaymentsController extends CookiesController {
 			if(!email.equals(""))
 				emailUsado=email;
 			else
-				emailUsado= (String) request.getSession().getAttribute("userEmail");
+				emailUsado= (String) request.getSession().getAttribute(cadenaUserEmail);
 
 			Cupon cupon = carrito.getCuponDescuento();
 			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(cupon.getCodigo());
@@ -149,21 +151,21 @@ public class PaymentsController extends CookiesController {
 	}
 
 	@PostMapping("/AplicarDescuento")
-	public void AplicarDescuento(HttpServletRequest request, @RequestBody Map<String, Object> info) {
+	public void aplicarDescuento(HttpServletRequest request, @RequestBody Map<String, Object> info) {
 		try {
 			JSONObject json = new JSONObject(info);
 			String codigoCupon = json.optString("cupon");
 			String emailAlternativo = json.optString("email");
 			String emailUsado ="";
 			
-			if(request.getSession().getAttribute("userEmail")!=null)
-				emailUsado = (String) request.getSession().getAttribute("userEmail");
+			if(request.getSession().getAttribute(cadenaUserEmail)!=null)
+				emailUsado = (String) request.getSession().getAttribute(cadenaUserEmail);
 
 			
-			Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+			Carrito carrito = (Carrito) request.getSession().getAttribute(cadenaCarrito);
 			if(carrito==null) { //Si no hay carrito en la session lo crea y lo inserta.
 				carrito =  new Carrito();
-				request.getSession().setAttribute("carrito",carrito);
+				request.getSession().setAttribute(cadenaCarrito,carrito);
 			}
 			
 			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(codigoCupon);
@@ -182,7 +184,7 @@ public class PaymentsController extends CookiesController {
 			} else {
 				if (!emailAlternativo.equals("")) // si hay un email introducido, significa que el usuario quiere usar ese email aunque este logueado en la pagina
 					emailUsado = emailAlternativo;
-				System.out.println(emailUsado);
+
 				if (!(emailUsado.contains("@") && (emailUsado.contains(".com") || emailUsado.contains(".es"))))
 					throw new CarrefulException(HttpStatus.FORBIDDEN, "El formato del correo introducido no es valido");
 
@@ -192,7 +194,7 @@ public class PaymentsController extends CookiesController {
 				if (optcuponMultiple.isPresent())
 					carrito = introducirCuponEnCarrito(request, optcuponMultiple.get());
 			}
-			request.getSession().setAttribute("carrito", carrito);
+			request.getSession().setAttribute(cadenaCarrito, carrito);
 
 		} catch (CarrefulException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -203,15 +205,15 @@ public class PaymentsController extends CookiesController {
 	@GetMapping("/PrecioTotal")
 	public double precioTotal(HttpServletRequest request) {
 		double total = 0;
-		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		Carrito carrito = (Carrito) request.getSession().getAttribute(cadenaCarrito);
 		if (carrito == null) {
 			carrito = new Carrito();
-			request.getSession().setAttribute("carrito", carrito);
+			request.getSession().setAttribute(cadenaCarrito, carrito);
 		}
 
-		Iterator<OrderedProduct> iterador_productos = carrito.getProducts().iterator();
-		while (iterador_productos.hasNext()) {
-			OrderedProduct aux = iterador_productos.next();
+		Iterator<OrderedProduct> iteradorProductos = carrito.getProducts().iterator();
+		while (iteradorProductos.hasNext()) {
+			OrderedProduct aux = iteradorProductos.next();
 			total += aux.getAmount() * aux.getPrecio();
 		}
 		if (carrito.getCuponDescuento() != null) {
@@ -240,11 +242,11 @@ public class PaymentsController extends CookiesController {
 	}
 
 	private Carrito introducirCuponEnCarrito(HttpServletRequest request, Cupon cupon) throws CarrefulException {
-		Carrito carrito = (Carrito) request.getSession().getAttribute("carrito");
+		Carrito carrito = (Carrito) request.getSession().getAttribute(cadenaCarrito);
 
 		if (cupon.getRango().comprobarValidez(Calendar.getInstance().getTime())) {
 			carrito.setCuponDescuento(cupon);
-			request.getSession().setAttribute("carrito", carrito);
+			request.getSession().setAttribute(cadenaCarrito, carrito);
 
 		} else
 			throw new CarrefulException(HttpStatus.FORBIDDEN, "El cupon no es valido a dia de hoy");

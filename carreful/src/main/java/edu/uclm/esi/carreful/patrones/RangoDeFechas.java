@@ -1,4 +1,4 @@
-package edu.uclm.esi.carreful.Patrones;
+package edu.uclm.esi.carreful.patrones;
 
 import java.util.Date;
 
@@ -16,16 +16,12 @@ public class RangoDeFechas {
 	}
 	
 	public boolean rangoCorrecto() {
-		if(fechaInicio.after(fechaFin))
-			return false;
-		else
-			return true;
+		return fechaInicio.before(fechaFin);
+
 	}
 	public boolean comprobarValidez(Date fechaActual) {
-		if(fechaActual.after(fechaFin) || fechaActual.before(fechaInicio))
-			return false;
-		else 
-			return true;
+		return !(fechaActual.after(fechaFin) || fechaActual.before(fechaInicio));
+
 		
 	}
 

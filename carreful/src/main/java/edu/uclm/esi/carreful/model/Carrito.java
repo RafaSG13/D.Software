@@ -1,9 +1,16 @@
 package edu.uclm.esi.carreful.model;
 
+
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class Carrito {
+
+
+
+
+public class Carrito implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private HashMap<String, OrderedProduct> products;
 	private Cupon cuponDescuento;
 

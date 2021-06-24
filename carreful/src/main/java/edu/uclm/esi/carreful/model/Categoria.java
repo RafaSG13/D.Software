@@ -13,7 +13,7 @@ public class Categoria {
 	private String id;
 	private String nombre;
 	@Column(nullable = false) @DefaultValue("0")
-	private int numero_de_productos;
+	private int numeroDeProductos;
 	
 	public Categoria() {
 		this.id = UUID.randomUUID().toString();
@@ -35,12 +35,12 @@ public class Categoria {
 		this.id = id;
 	}
 
-	public int getNumero_de_productos() {
-		return numero_de_productos;
+	public int getNumeroDeProductos() {
+		return numeroDeProductos;
 	}
 
-	public void setNumero_de_productos(int numero_de_productos) {
-		this.numero_de_productos = numero_de_productos;
+	public void setNumeroDeProductos(int numeroDeProductos) {
+		this.numeroDeProductos = numeroDeProductos;
 	}
 
 	

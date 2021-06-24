@@ -71,6 +71,6 @@ public class Email {
 	public static void main(String[] args) throws Exception {
 		Email sender=new Email();
 		sender.send("terrarafael23@gmail.com", "Hola", "Caracola");
-		System.out.println("Enviado");
+
 	}
 }
