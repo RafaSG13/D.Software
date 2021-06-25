@@ -156,10 +156,10 @@ public class PaymentsController extends CookiesController {
 			JSONObject json = new JSONObject(info);
 			String codigoCupon = json.optString("cupon");
 			String emailAlternativo = json.optString("email");
-			String emailUsado ="";
+			String emailSession ="";
 			
 			if(request.getSession().getAttribute(cadenaUserEmail)!=null)
-				emailUsado = (String) request.getSession().getAttribute(cadenaUserEmail);
+				emailSession = (String) request.getSession().getAttribute(cadenaUserEmail);
 
 			
 			Carrito carrito = (Carrito) request.getSession().getAttribute(cadenaCarrito);
@@ -178,22 +178,14 @@ public class PaymentsController extends CookiesController {
 			if (optcuponUnUso.isPresent() && !optcuponUnUso.get().isUsado())
 				carrito = introducirCuponEnCarrito(request, optcuponUnUso.get());
 
-			if (emailAlternativo.equals("") && emailUsado.equals("")) {
-				throw new CarrefulException(HttpStatus.FORBIDDEN,
-						"Para utilizar este tipo de cupon necesitas introducir un email en el campo email alternativo o bien iniciar sesion");
-			} else {
-				if (!emailAlternativo.equals("")) // si hay un email introducido, significa que el usuario quiere usar ese email aunque este logueado en la pagina
-					emailUsado = emailAlternativo;
-
-				if (!(emailUsado.contains("@") && (emailUsado.contains(".com") || emailUsado.contains(".es"))))
-					throw new CarrefulException(HttpStatus.FORBIDDEN, "El formato del correo introducido no es valido");
-
+				String emailUsado=emailSessionOemailAlternativo(emailSession, emailAlternativo);
+		
 				if (optcuponUnUsuario.isPresent() && !optcuponUnUsuario.get().contieneUsuario(emailUsado))
 					carrito = introducirCuponEnCarrito(request, optcuponUnUsuario.get());
 
 				if (optcuponMultiple.isPresent())
 					carrito = introducirCuponEnCarrito(request, optcuponMultiple.get());
-			}
+			
 			request.getSession().setAttribute(cadenaCarrito, carrito);
 
 		} catch (CarrefulException e) {
@@ -253,4 +245,35 @@ public class PaymentsController extends CookiesController {
 			throw new CarrefulException(HttpStatus.FORBIDDEN, "El cupon no es valido a dia de hoy");
 		return carrito;
 	}
+	
+	private String emailSessionOemailAlternativo(String emailSession, String emailAlternativo) throws CarrefulException {
+		String emailUsado;
+		
+		if(emailAlternativo.equals("") && emailSession.equals("")) throw new CarrefulException(HttpStatus.FORBIDDEN,
+				"Para utilizar esta funcionalidad debe introducir un email. Introduzca un correo alternativo o inicie session.");
+
+		if (!emailAlternativo.equals(""))
+			emailUsado = emailAlternativo;
+		else
+			emailUsado= emailSession;
+		
+		if (!(emailUsado.contains("@") && (emailUsado.contains(".com") || emailUsado.contains(".es"))))
+			throw new CarrefulException(HttpStatus.FORBIDDEN, "El formato del correo introducido no es valido");
+		
+		return emailUsado;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

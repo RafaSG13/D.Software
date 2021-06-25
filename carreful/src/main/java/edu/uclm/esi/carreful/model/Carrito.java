@@ -5,16 +5,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 
-import javax.persistence.Transient;
-
-
 
 
 
 public class Carrito implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private HashMap<String, OrderedProduct> products;
-	@Transient
 	private Cupon cuponDescuento;
 
 	

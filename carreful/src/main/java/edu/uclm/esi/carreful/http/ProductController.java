@@ -40,6 +40,8 @@ public class ProductController extends CookiesController{
 	@PostMapping("/add")
 	public void add(HttpServletRequest request,@RequestBody Product product) {
 		try {
+			
+			
 			if(request.getSession().getAttribute("rol")==null || !(boolean) request.getSession().getAttribute("rol"))
 				throw new CarrefulException(HttpStatus.FORBIDDEN,"No tiene permiso para añadir un producto a la Base de Datos");
 	

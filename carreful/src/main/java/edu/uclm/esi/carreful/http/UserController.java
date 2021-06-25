@@ -132,6 +132,7 @@ public class UserController extends CookiesController {
 			user.setRol(true);
 		else
 			user.setRol(false);
+		
 		return user;
 	}
 }
