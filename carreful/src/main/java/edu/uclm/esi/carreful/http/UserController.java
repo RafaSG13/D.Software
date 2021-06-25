@@ -66,17 +66,12 @@ public class UserController extends CookiesController {
 				throw new CarrefulException(HttpStatus.NOT_ACCEPTABLE,"La contraseña tiene que tener al menos 8 caracteres");
 			
 			User user = new User();
-			
-			String rol = jso.optString("rol");
-			if(rol.equalsIgnoreCase("empleado"))
-				user.setRol(true);
-			else
-				user.setRol(false);
-			
+			user=asignarRolUsuario(user,jso.optString("rol"));
 			user.setEmail(email);
 			user.setPwd(pwd1);
 			user.setPicture(jso.optString("picture"));
 			userDao.save(user);
+			
 			Email correConfirmacion = new Email();
 			String contenido="Su registro se ha realizado con éxito.\nSus credenciales son:\nUsuario: "+email+"\nContraseña: "+pwd1;
 			correConfirmacion.send(user.getEmail(), "Registro completado en Carreful", contenido);
@@ -130,5 +125,13 @@ public class UserController extends CookiesController {
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 		}
+	}
+	
+	private User asignarRolUsuario(User user, String rol) {
+		if(rol.equalsIgnoreCase("empleado"))
+			user.setRol(true);
+		else
+			user.setRol(false);
+		return user;
 	}
 }

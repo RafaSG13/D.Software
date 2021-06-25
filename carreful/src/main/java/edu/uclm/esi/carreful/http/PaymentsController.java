@@ -233,12 +233,13 @@ public class PaymentsController extends CookiesController {
 	}
 
 	public String sacarProductos(Iterator<OrderedProduct> productos) {
-		String pedido = "";
+		StringBuilder pedido = new StringBuilder();
 		while (productos.hasNext()) {
 			OrderedProduct aux = productos.next();
-			pedido += aux.getName() + "," + aux.getAmount() + "," + aux.getPrecio() + "\n";
+			pedido.append(""+aux.getName() + "," + aux.getAmount() + "," + aux.getPrecio() + "\n");
 		}
-		return pedido;
+	
+		return 	pedido.toString();
 	}
 
 	private Carrito introducirCuponEnCarrito(HttpServletRequest request, Cupon cupon) throws CarrefulException {
