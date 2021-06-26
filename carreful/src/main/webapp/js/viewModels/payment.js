@@ -115,12 +115,18 @@ define([ 'knockout', 'appController', 'ojs/ojmodule-element-utils', 'accUtils',
 		
 		confirmarPedido() {
 			let self = this;
+			
+			if(self.email()==""){
+				self.email("vacio");
+			}
+
 			let data = {
 				url : "payments/confirmarPedido/"+self.email(),
 				type : "get",
 				contentType : 'application/json',
 				success : function(response) {
 					alert(response);
+					self.email("");
 					self.decrementarStock();
 				},
 				error : function(response) {

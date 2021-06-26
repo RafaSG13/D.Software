@@ -7,12 +7,11 @@ import javax.persistence.Entity;
 import edu.uclm.esi.carreful.model.Cupon;
 @Entity
 public class CuponMultiple extends Cupon{
-	String usuario;
 	int vecesUsado;
 	
-	public CuponMultiple(Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento, String usuario) {
+	public CuponMultiple(Date fechaInicio, Date fechaFin, double descuento, String tipoDescuento) {
 		super(fechaInicio,fechaFin,descuento,tipoDescuento);
-		this.usuario=usuario;
+		this.vecesUsado=0;
 	}
 	
 	public CuponMultiple() {
@@ -21,9 +20,15 @@ public class CuponMultiple extends Cupon{
 	
 	@Override
 	public void usarCupon(String email) {
-		if(this.usuario.equals(email))
 			vecesUsado++;
-		
+	}
+
+	public int getVecesUsado() {
+		return vecesUsado;
+	}
+
+	public void setVecesUsado(int vecesUsado) {
+		this.vecesUsado = vecesUsado;
 	}
 	
 }

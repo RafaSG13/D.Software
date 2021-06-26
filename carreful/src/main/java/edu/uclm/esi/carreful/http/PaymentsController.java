@@ -94,11 +94,18 @@ public class PaymentsController extends CookiesController {
 	}
 
 	@GetMapping("/confirmarPedido/{email}")
-	public String confirmarPedido(HttpServletRequest request,@PathVariable String email) {
+	public String confirmarPedido(HttpServletRequest request, @PathVariable String email) {
 		try {
+		
+			if(email.equals("vacio"))
+				email="";
+			String emailSession="";
 			Carrito carrito=(Carrito) request.getSession().getAttribute(cadenaCarrito);
-			User user = userDao.findByEmail((String) request.getSession().getAttribute(cadenaUserEmail));
-
+			User user= null;
+			if(request.getSession().getAttribute("userEmail") != null) {
+				user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
+				emailSession = (String) request.getSession().getAttribute("userEmail");
+			}			
 			Corder pedido = new Corder();
 			pedido.setPrecioTotal(precioTotal(request));
 			pedido.setState("Preparandose");
@@ -107,7 +114,7 @@ public class PaymentsController extends CookiesController {
 			corderDao.save(pedido);
 			
 			if (user != null) {
-				Token token = new Token((String) request.getSession().getAttribute(cadenaUserEmail));
+				Token token = new Token((String) request.getSession().getAttribute("userEmail"));
 				tokenDao.save(token);
 				Email smtp = new Email();
 				String texto = "Su pedido es el siguiente: " + "<a href='http://localhost/user/usarToken/"
@@ -115,10 +122,8 @@ public class PaymentsController extends CookiesController {
 				smtp.send(user.getEmail(), "Carreful confirmacion de Pedido.", texto);
 			}
 			String emailUsado="";
-			if(!email.equals(""))
-				emailUsado=email;
-			else
-				emailUsado= (String) request.getSession().getAttribute(cadenaUserEmail);
+			emailUsado=emailSessionOemailAlternativo(emailSession, email);
+			
 
 			Cupon cupon = carrito.getCuponDescuento();
 			Optional<CuponUnUso> optcuponUnUso = cuponUnUsoDao.findById(cupon.getCodigo());
@@ -126,7 +131,7 @@ public class PaymentsController extends CookiesController {
 			Optional<CuponUnUsuario> optcuponUnUsuario = cuponUnUsuarioDao.findById(cupon.getCodigo());
 
 			if (optcuponUnUso.isPresent()) {
-				optcuponUnUso.get().usarCupon("");
+				optcuponUnUso.get().usarCupon(emailUsado);
 				cuponUnUsoDao.deleteById(optcuponUnUso.get().getCodigo());
 				cuponUnUsoDao.save(optcuponUnUso.get());
 			}
@@ -145,7 +150,7 @@ public class PaymentsController extends CookiesController {
 
 			return "Compra realizada con exito\nPedido con numero: " + pedido.getId();
 
-		} catch (Exception e) {
+		} catch (CarrefulException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 		}
 	}
@@ -175,8 +180,11 @@ public class PaymentsController extends CookiesController {
 			if (!optcuponUnUso.isPresent() && !optcuponMultiple.isPresent() && !optcuponUnUsuario.isPresent())
 				throw new CarrefulException(HttpStatus.NOT_FOUND, "El cupon introducido no existe");
 
-			if (optcuponUnUso.isPresent() && !optcuponUnUso.get().isUsado())
+			if (optcuponUnUso.isPresent()) {
+				if(optcuponUnUso.get().isUsado()) throw new CarrefulException(HttpStatus.FORBIDDEN,"El cupon ya ha sido utilizado");
 				carrito = introducirCuponEnCarrito(request, optcuponUnUso.get());
+			}
+				
 
 				String emailUsado=emailSessionOemailAlternativo(emailSession, emailAlternativo);
 		
