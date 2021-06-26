@@ -102,9 +102,9 @@ public class PaymentsController extends CookiesController {
 			String emailSession="";
 			Carrito carrito=(Carrito) request.getSession().getAttribute(cadenaCarrito);
 			User user= null;
-			if(request.getSession().getAttribute("userEmail") != null) {
-				user = userDao.findByEmail((String) request.getSession().getAttribute("userEmail"));
-				emailSession = (String) request.getSession().getAttribute("userEmail");
+			if(request.getSession().getAttribute(cadenaUserEmail) != null) {
+				user = userDao.findByEmail((String) request.getSession().getAttribute(cadenaUserEmail));
+				emailSession = (String) request.getSession().getAttribute(cadenaUserEmail);
 			}			
 			Corder pedido = new Corder();
 			pedido.setPrecioTotal(precioTotal(request));
@@ -114,7 +114,7 @@ public class PaymentsController extends CookiesController {
 			corderDao.save(pedido);
 			
 			if (user != null) {
-				Token token = new Token((String) request.getSession().getAttribute("userEmail"));
+				Token token = new Token((String) request.getSession().getAttribute(cadenaUserEmail));
 				tokenDao.save(token);
 				Email smtp = new Email();
 				String texto = "Su pedido es el siguiente: " + "<a href='http://localhost/user/usarToken/"

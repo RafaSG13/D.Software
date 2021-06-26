@@ -59,8 +59,7 @@
         <div>
             <input type="text" data-bind="value : nombre" placeholder="Nombre del producto">
             <input type="text" data-bind="value : precio" placeholder="Precio">
-            <input type="text" data-bind="value : cantidad" placeholder="Cantidad">
-           
+            <input type="number" data-bind="value : cantidad" placeholder="Cantidad" onkeyup="if(this.value<0){this.value= this.value * -1}" min = "0">
             
             <select data-bind="options: categorias,
                    optionsText: function(item) {
